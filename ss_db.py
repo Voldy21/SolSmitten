@@ -23,6 +23,11 @@ conn = pymysql.connect(
 
 
 def insert_details(user_email, user_id, user_name, user_password, user_score):
+    user_email = "jonahlvngstn@gmail.com"
+    user_id = "123456"
+    user_name = "Voldy"
+    user_password = "password"
+    user_score = 200
     cursor = conn.cursor()
     cursor.execute("INSERT INTO User_Profile (user_email, user_id, user_name, user_password, user_score) VALUES (%s,%s,%s,%s,%s)",
                    (user_email, user_id, user_name, user_password, user_score))
@@ -33,4 +38,13 @@ def get_user_profile():
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM User_Profile")
     details = cursor.fetchall()
+    return details
+
+# read the data
+
+
+def get_details():
+    cur = conn.cursor()
+    cur.execute("SELECT *  FROM User_Profile")
+    details = cur.fetchall()
     return details
