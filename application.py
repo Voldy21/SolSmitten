@@ -6,8 +6,8 @@ application = Flask(__name__)
 
 @application.route("/")
 def hello():
-    # details = db.get_details()
-    # print(details)
+    details = db.get_details()
+    print(details)
     return "Hello World"
 
 

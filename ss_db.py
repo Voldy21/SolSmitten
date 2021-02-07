@@ -9,9 +9,9 @@ conn = pymysql.connect(
 
 )
 
-# Table Creation
-# cursor=conn.cursor()
-# create_table="""
+# # Table Creation
+# cursor = conn.cursor()
+# create_table = """
 # create table User_Profile (user_email VARCHAR(30) PRIMARY KEY,
 # user_id INT,
 # user_name VARCHAR(30),
