@@ -22,29 +22,43 @@ conn = pymysql.connect(
 # cursor.execute(create_table)
 
 
-def insert_details(user_email, user_id, user_name, user_password, user_score):
-    user_email = "jonahlvngstn@gmail.com"
-    user_id = "123456"
-    user_name = "Voldy"
-    user_password = "password"
-    user_score = 200
+def insert_details(args):
+    email = args.email
+    firstName = args.firstName
+    lastName = args.lastName
+    password = args.password
+    skinType = args.skinType
+    skinFeel = args.skinFeel
+    sensitivty = args.sensitivity
+    goals = args.goals
+    age = args.age
+    stress = args.stress
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO User_Profile (user_email, user_id, user_name, user_password, user_score) VALUES (%s,%s,%s,%s,%s)",
-                   (user_email, user_id, user_name, user_password, user_score))
+    cursor.execute("INSERT INTO Sign_Up2 (FirstName, LastName, email, morningSkin, userPassword, sensitivity, goals, age, stress, skinType) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s, %s)",
+                   (firstName, lastName, email, skinFeel, password, sensitivty, goals, age, stress, skinType))
     conn.commit()
 
 
 def get_user_profile():
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM User_Profile")
+    cursor.execute("SELECT * FROM Sign_Up2")
     details = cursor.fetchall()
     return details
+
+
+def delete_user_profile(name):
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Sign_Up2 WHERE firstName=%s", [name])
+        return "Success"
+    except:
+        return "Failure"
 
 # read the data
 
 
 def get_details():
     cur = conn.cursor()
-    cur.execute("SELECT *  FROM User_Profile")
+    cur.execute("SELECT *  FROM Sign_Up2")
     details = cur.fetchall()
     return details
