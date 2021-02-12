@@ -53,9 +53,9 @@ def hello():
     return string
 
 
-# @application.route("/")
-# def ping():
-#     return "ping"
+@application.route("/")
+def ping():
+    return "ping"
 
 
 if __name__ == "__main__":
