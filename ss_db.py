@@ -38,12 +38,14 @@ def insert_details(args):
     cursor.execute("INSERT INTO Sign_Up2 (FirstName, LastName, email, morningSkin, userPassword, sensitivity, goals, age, stress, skinType) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s, %s)",
                    (firstName, lastName, email, skinFeel, password, sensitivty, goals, age, stress, skinType))
     conn.commit()
+    cursor.close()
 
 
 def get_user_profile():
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM Sign_Up2")
     details = cursor.fetchall()
+    cursor.close()
     return details
 
 
@@ -51,6 +53,7 @@ def delete_user_profile(name):
     try:
         cursor = conn.cursor()
         cursor.execute("DELETE FROM Sign_Up2 WHERE firstName=%s", [name])
+        cursor.close()
         return "Success"
     except:
         return "Failure"
@@ -59,7 +62,8 @@ def delete_user_profile(name):
 
 
 def get_details():
-    cur = conn.cursor()
-    cur.execute("SELECT *  FROM Sign_Up2")
-    details = cur.fetchall()
+    cursor = conn.cursor()
+    cursor.execute("SELECT *  FROM Sign_Up2")
+    details = cursor.fetchall()
+    cursor.close()
     return details
