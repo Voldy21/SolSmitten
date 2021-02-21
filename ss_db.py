@@ -67,3 +67,14 @@ def get_details():
     details = cursor.fetchall()
     cursor.close()
     return details
+
+
+def login(args):
+    email = args.email
+    password = args.password
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute(
+        "SELECT * FROM Sign_Up2 WHERE email=%s AND userPassword=%s", [email, password])
+    details = cursor.fetchall()
+    cursor.close()
+    return details
