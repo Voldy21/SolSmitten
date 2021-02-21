@@ -20,6 +20,7 @@ conn = pymysql.connect(
 
 # """
 # cursor.execute(create_table)
+# hello
 
 
 def insert_details(args):
