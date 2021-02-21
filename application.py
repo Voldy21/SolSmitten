@@ -45,12 +45,12 @@ api.add_resource(SignUp, "/signup/<string:name>")
 
 @application.route("/")
 def hello():
-    details = db.get_details()
-    string = ""
-    for i in range(len(details)):
-        string += "".join(str(details[i]))
-        string += "<br>"
-    return string
+    # details = db.get_details()
+    # string = ""
+    # for i in range(len(details)):
+    #     string += "".join(str(details[i]))
+    #     string += "<br>"
+    return "string"
 
 
 @application.route("/")
