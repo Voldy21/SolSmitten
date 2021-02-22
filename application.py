@@ -31,11 +31,13 @@ def initSignup():
         "stress", type=str, help="Rating of stress levels", required=True)
     signup_args.add_argument("password", type=str,
                              help="Password is required", required=True)
+    signup_args.add_argument("username", type=str,
+                             help="Username is required", required=True)
 
 
 def initLogin():
-    signup_args.add_argument("email", type=str,
-                             help="Email Required", required=True)
+    signup_args.add_argument("username", type=str,
+                             help="username required", required=True)
     signup_args.add_argument("password", type=str,
                              help="Password Required", required=True)
 
@@ -50,17 +52,7 @@ class SignUp(Resource):
 
 
 # Login endpoint
-
-
 class Login(Resource):
-    def get(self):
-        response_body = {
-            "message": "Testing",
-        }
-
-        res = make_response(jsonify(response_body), 200)
-        return res
-
     def post(self):
         initLogin()
         args = signup_args.parse_args()
@@ -72,6 +64,7 @@ class Login(Resource):
             res = make_response(jsonify(response_body), 404)
             return res
         else:  # else return data
+            # remove password before sending to user
             result[0].pop("userPassword")
             response_body = {
                 "user": result[0]
@@ -80,6 +73,7 @@ class Login(Resource):
             return res
 
 
+# Delete endpoint
 class Delete(Resource):
     def delete(self, name):
         response = db.delete_user_profile(name)
@@ -94,17 +88,13 @@ api.add_resource(Delete, "/delete/<string:name>")
 @application.route("/")
 def hello():
     details = db.get_details()
-    print(details[0])
-    string = ""
-    for i in range(len(details[0])):
-        string += "".join(str(details[0][i]))
-        string += "<br>"
+    string = jsonify(details)
+    # string = ""
+    # for i in range(len(details)):
+    #     for a in range(len(details[i])):
+    #         string += "".join(str(details[i][a]))
+    #         string += "<br>"
     return string
-
-
-@application.route("/")
-def ping():
-    return "ping"
 
 
 if __name__ == "__main__":

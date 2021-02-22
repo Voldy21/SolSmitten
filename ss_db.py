@@ -34,9 +34,10 @@ def insert_details(args):
     goals = args.goals
     age = args.age
     stress = args.stress
+    username = args.username
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO Sign_Up2 (FirstName, LastName, email, morningSkin, userPassword, sensitivity, goals, age, stress, skinType) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s, %s)",
-                   (firstName, lastName, email, skinFeel, password, sensitivty, goals, age, stress, skinType))
+    cursor.execute("INSERT INTO Sign_Up2 (FirstName, LastName, email, morningSkin, userPassword, sensitivity, goals, age, stress, skinType, username) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s)",
+                   (firstName, lastName, email, skinFeel, password, sensitivty, goals, age, stress, skinType, username))
     conn.commit()
     cursor.close()
 
@@ -70,11 +71,11 @@ def get_details():
 
 
 def login(args):
-    email = args.email
+    username = args.username
     password = args.password
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute(
-        "SELECT * FROM Sign_Up2 WHERE email=%s AND userPassword=%s", [email, password])
+        "SELECT * FROM Sign_Up2 WHERE username=%s AND userPassword=%s", [username, password])
     details = cursor.fetchall()
     cursor.close()
     return details
