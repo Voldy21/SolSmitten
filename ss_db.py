@@ -1,11 +1,12 @@
 import pymysql
 
 conn = pymysql.connect(
-    host='aa1wroi7lsdck1e.cblj8nprhubx.us-east-2.rds.amazonaws.com',
+    host='solsmitten.cxlp2fnydlpe.us-east-1.rds.amazonaws.com',
     port=3306,
     user='admin',
-    password='solsmitten',
-    db='Users',
+    password='jdtgr9704',
+    db='Solsmitten',
+    cursorclass=pymysql.cursors.DictCursor
 
 )
 
@@ -36,24 +37,16 @@ def insert_details(args):
     stress = args.stress
     username = args.username
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO Sign_Up2 (FirstName, LastName, email, morningSkin, userPassword, sensitivity, goals, age, stress, skinType, username) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s)",
+    cursor.execute("INSERT INTO Users (FirstName, LastName, email, skinFeel, password, sensitivity, goals, age, stress, skinType, username) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s)",
                    (firstName, lastName, email, skinFeel, password, sensitivty, goals, age, stress, skinType, username))
     conn.commit()
     cursor.close()
 
 
-def get_user_profile():
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Sign_Up2")
-    details = cursor.fetchall()
-    cursor.close()
-    return details
-
-
 def delete_user_profile(name):
     try:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM Sign_Up2 WHERE firstName=%s", [name])
+        cursor.execute("DELETE FROM Users WHERE firstName=%s", [name])
         cursor.close()
         return "Success"
     except:
@@ -64,7 +57,7 @@ def delete_user_profile(name):
 
 def get_details():
     cursor = conn.cursor()
-    cursor.execute("SELECT *  FROM Sign_Up2")
+    cursor.execute("SELECT *  FROM Users")
     details = cursor.fetchall()
     cursor.close()
     return details
@@ -75,7 +68,7 @@ def login(args):
     password = args.password
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute(
-        "SELECT * FROM Sign_Up2 WHERE username=%s AND userPassword=%s", [username, password])
+        "SELECT * FROM Users WHERE username=%s AND password=%s", [username, password])
     details = cursor.fetchall()
     cursor.close()
     return details
