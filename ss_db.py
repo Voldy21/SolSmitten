@@ -25,17 +25,17 @@ conn = pymysql.connect(
 
 
 def insert_details(args):
-    email = args.email
-    firstName = args.firstName
-    lastName = args.lastName
-    password = args.password
-    skinType = args.skinType
-    skinFeel = args.skinFeel
-    sensitivty = args.sensitivity
-    goals = args.goals
-    age = args.age
-    stress = args.stress
-    username = args.username
+    email = args['Email']
+    firstName = args['First name']
+    lastName = args['Last name']
+    password = args['Password']
+    skinType = args['Skin type']
+    skinFeel = args['Skin feel']
+    sensitivty = args['Sensitivity']
+    goals = args['Goals']
+    age = args['Age']
+    stress = args['Stress']
+    username = args['Username']
     cursor = conn.cursor()
     cursor.execute("INSERT INTO Users (FirstName, LastName, email, skinFeel, password, sensitivity, goals, age, stress, skinType, username) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s)",
                    (firstName, lastName, email, skinFeel, password, sensitivty, goals, age, stress, skinType, username))
