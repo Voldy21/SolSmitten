@@ -1,11 +1,11 @@
 import pymysql
 
 conn = pymysql.connect(
-    host='solsmitten.cxlp2fnydlpe.us-east-1.rds.amazonaws.com',
+    host='solsmitten.cksbydx5ca50.us-east-1.rds.amazonaws.com',
     port=3306,
     user='admin',
-    password='jdtgr9704',
-    db='Solsmitten',
+    password='solsmitten',
+    db='User_Info',
     cursorclass=pymysql.cursors.DictCursor
 
 )
@@ -42,6 +42,12 @@ def insert_details(args):
     conn.commit()
     cursor.close()
 
+def add_image_url(url):
+    images = url
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO Users (images) VALUES (%s)", (images))
+    conn.commit()
+    cursor.close()
 
 def delete_user_profile(name):
     try:
