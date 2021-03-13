@@ -1,11 +1,11 @@
 import pymysql
 
 conn = pymysql.connect(
-    host='solsmitten.cksbydx5ca50.us-east-1.rds.amazonaws.com',
+    host='solsmitten.cxlp2fnydlpe.us-east-1.rds.amazonaws.com',
     port=3306,
     user='admin',
-    password='solsmitten',
-    db='User_Info',
+    password='jdtgr9704',
+    db='Solsmitten',
     cursorclass=pymysql.cursors.DictCursor
 
 )
