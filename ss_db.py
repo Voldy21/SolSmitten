@@ -42,6 +42,12 @@ def insert_details(args):
     conn.commit()
     cursor.close()
 
+def add_image_url(url):
+    images = url
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO Users (images) VALUES (%s)", (images))
+    conn.commit()
+    cursor.close()
 
 def delete_user_profile(name):
     try:
