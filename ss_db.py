@@ -42,6 +42,7 @@ def insert_details(args):
     conn.commit()
     cursor.close()
 
+
 def add_image_url(url):
     images = url
     cursor = conn.cursor()
@@ -49,10 +50,11 @@ def add_image_url(url):
     conn.commit()
     cursor.close()
 
+
 def delete_user_profile(name):
     try:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM Users WHERE firstName=%s", [name])
+        cursor.execute("DELETE FROM Users WHERE lastName=%s", [name])
         cursor.close()
         return "Success"
     except:
@@ -78,3 +80,13 @@ def login(args):
     details = cursor.fetchall()
     cursor.close()
     return details
+
+
+def delete_all():
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Users WHERE firstName=%s", ["b%"])
+        cursor.close()
+        return "Success"
+    except:
+        return "Failure"

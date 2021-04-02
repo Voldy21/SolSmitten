@@ -2,7 +2,10 @@ from flask import Flask, jsonify, make_response
 import ss_db as db
 from flask_restful import Api, Resource, reqparse
 
+
 signup_args = reqparse.RequestParser()
+
+
 
 
 def initSignup():
@@ -28,6 +31,9 @@ def initSignup():
                              help="Password is required", required=True)
     signup_args.add_argument("Username", type=str,
                              help="Username is required", required=True)
+
+
+
 
 
 class SignUp(Resource):

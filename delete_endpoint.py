@@ -8,3 +8,7 @@ class Delete(Resource):
     def delete(self, name):
         response = db.delete_user_profile(name)
         return {"response": response}
+
+    # def post(self, name):
+    #     response = db.delete_all()
+    #     return {"response": response}

@@ -1,5 +1,23 @@
-from flask import Flask, jsonify, make_response
+from flask import Flask, jsonify, make_response, request
 import boto3
+import os
+import werkzeug
+from flask_restful import Resource, reqparse, Api
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+
+
+class UploadImage(Resource):
+    def post(self):
+
+        parse = reqparse.RequestParser()
+        parse.add_argument(
+            'file', type=werkzeug.datastructures.FileStorage, location='/images')
+        args = parse.parse_args()
+        print(args)
+        image_file = args['file']
+        if image_file:
+            image_file.save("your_file_name.jpg")
 
 
 def upload_file(file_name, bucket):
