@@ -6,8 +6,8 @@ from flask_restful import Api, Resource, reqparse
 from signup_endpoint import SignUp
 from login_endpoint import Login
 from delete_endpoint import Delete
-from s3_functions import UploadImage
-from s3_functions import list_files, download_file, upload_file
+from S3Bucket import UploadImage
+from S3Bucket import list_files, download_file, upload_file
 from werkzeug.utils import secure_filename
 from S3Bucket import uploadFileToS3
 
@@ -32,6 +32,12 @@ def hello():
         "info": details
     }
     return string
+
+
+@application.route("/<username>")
+def find(username):
+    details = db.getUser_ID(username)
+    return {"user_id": details['primary_key']}
 
 
 @application.route('/uploader', methods=['GET', 'POST'])

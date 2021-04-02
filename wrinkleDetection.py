@@ -109,7 +109,3 @@ def wrinkleDetection(imgLocation):
 
         cv2.imshow("forehead_edges", img)
         cv2.waitKey(0)
-
-
-wrinkleDetection(
-    'https://www.isdin.com/en-US/blog/wp-content/uploads/2020/08/how_to_get_rid_of_forehead_wrinkles_header-1170x600.jpg')
