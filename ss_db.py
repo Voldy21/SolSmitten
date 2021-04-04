@@ -48,7 +48,7 @@ def insert_details(args):
     return user_id
 
 
-def add_image_url(wrinkleUrl, originalUrl, wrinkleScore, userID, ):
+def insert_image_details(wrinkleUrl, originalUrl, wrinkleScore, userID, ):
     try:
         cursor = conn.cursor()
         cursor.execute("INSERT INTO Images (user_id, wrinkle_link, original_link, wrinkles_score) VALUES (%s, %s, %s, %s)",
@@ -75,6 +75,14 @@ def delete_user_profile(name):
 def get_details():
     cursor = conn.cursor()
     cursor.execute("SELECT *  FROM Users")
+    details = cursor.fetchall()
+    cursor.close()
+    return details
+
+
+def get_Image_details():
+    cursor = conn.cursor()
+    cursor.execute("SELECT *  FROM Image")
     details = cursor.fetchall()
     cursor.close()
     return details

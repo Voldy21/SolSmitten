@@ -67,13 +67,15 @@ def uploadFileToS3FromStorage(location, fileName):
     s3_client = boto3.client('s3')
     data = open(fileName, 'rb')
     s3_client.put_object(Key=fileName, Body=data, Bucket=bucket_name)
+    url = s3_client.generate_presigned_url('get_object', params)
+    return url
 
 
 class UploadImage(Resource):
     def post(self):
         parse = reqparse.RequestParser()
         parse.add_argument(
-            'newFile', type=werkzeug.datastructures.FileStorage, location='/images')
+            'file', type=werkzeug.datastructures.FileStorage, location='/images')
         parse.add_argument('user_id', type=int)
         args = parse.parse_args()
         print(args)

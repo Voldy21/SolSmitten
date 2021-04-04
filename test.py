@@ -1,4 +1,3 @@
-import os
+x = "bananananana"
 
-print(os.path.join(os.path.dirname((__file__)), "images")
-      )
+print(x.replace("a", "c"))

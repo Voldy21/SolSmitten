@@ -10,6 +10,7 @@ from S3Bucket import list_files, download_file, upload_file, UploadImage, upload
 from werkzeug.utils import secure_filename
 from S3Bucket import uploadFileToS3
 from wrinkleDetection import wrinkleDetection
+import datetime
 
 BUCKET = "elasticbeanstalk-us-east-1-671261739394"
 
@@ -35,6 +36,15 @@ def hello():
     return string
 
 
+@application.route("/images")
+def Images():
+    details = db.get_Image_details()
+    string = {
+        "info": details
+    }
+    return string
+
+
 # @application.route("/<username>")
 # def find(username):
 #     details = db.getUser_ID(username)
@@ -45,18 +55,28 @@ def hello():
 def upload_file_route():
     if request.method == 'POST':
         if request.files:
+            # try:
+            timeStamp = str(datetime.datetime.now()).split('.')[
+                0].replace(":", "-")
             f = request.files['file']
-            print(request)
+            urlSplit = f.filename.split(".")
+            user_id = urlSplit[0]
+            fileName = f'{user_id}-{timeStamp}.{urlSplit[1]}'
             # save original image to s3 bucket
-            # url = uploadFileToS3(f, f.filename)
-            # # split name wrinkleDetection filename
-            # urlSplit = f.filename.split(".")
-            # wrinkleDetectionName = f'{urlSplit[0]}-wd.{urlSplit[1]}'
-            # # send image through wrinkle detection
-            # x = wrinkleDetection(url, wrinkleDetectionName)
-            # # upload processed image to s3 bucket
-            # uploadFileToS3FromStorage(os.path.join(
-            #     os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
+            originalURL = uploadFileToS3(f, fileName)
+            # split name wrinkleDetection filename
+            wrinkleDetectionName = f'{user_id}-wd-{timeStamp}.{urlSplit[1]}'
+            # send image through wrinkle detection
+            wrinkleScore = wrinkleDetection(
+                originalURL, wrinkleDetectionName)
+            # upload processed image to s3 bucket
+            wrinkleURL = uploadFileToS3FromStorage(os.path.join(
+                os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
+            x = db.insert_image_details(
+                wrinkleURL, originalURL, wrinkleScore, user_id)
+            return "success"
+            # except:
+            #     return "failed"
             # return str(x)
         return "failed"
 
