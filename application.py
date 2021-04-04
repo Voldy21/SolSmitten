@@ -23,6 +23,7 @@ CORS(application)
 api.add_resource(Login, "/login")
 api.add_resource(SignUp, "/signup")
 api.add_resource(Delete, "/delete/<string:name>")
+api.add_resource(UploadImage, "/upload")
 
 
 @application.route("/")
@@ -34,10 +35,10 @@ def hello():
     return string
 
 
-@application.route("/<username>")
-def find(username):
-    details = db.getUser_ID(username)
-    return {"user_id": details['primary_key']}
+# @application.route("/<username>")
+# def find(username):
+#     details = db.getUser_ID(username)
+#     return {"user_id": details['primary_key']}
 
 
 @application.route('/uploader', methods=['GET', 'POST'])
@@ -45,21 +46,19 @@ def upload_file_route():
     if request.method == 'POST':
         if request.files:
             f = request.files['file']
+            print(request)
             # save original image to s3 bucket
-            url = uploadFileToS3(f, f.filename)
-            # split name wrinkleDetection filename
-            urlSplit = f.filename.split(".")
-            wrinkleDetectionName = f'{urlSplit[0]}-wd.{urlSplit[1]}'
-            # send image through wrinkle detection
-            x = wrinkleDetection(url, wrinkleDetectionName)
-            # upload processed image to s3 bucket
-            uploadFileToS3FromStorage(os.path.join(
-                os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
-            return str(x)
+            # url = uploadFileToS3(f, f.filename)
+            # # split name wrinkleDetection filename
+            # urlSplit = f.filename.split(".")
+            # wrinkleDetectionName = f'{urlSplit[0]}-wd.{urlSplit[1]}'
+            # # send image through wrinkle detection
+            # x = wrinkleDetection(url, wrinkleDetectionName)
+            # # upload processed image to s3 bucket
+            # uploadFileToS3FromStorage(os.path.join(
+            #     os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
+            # return str(x)
         return "failed"
-
-
-api.add_resource(UploadImage, "/upload")
 
 
 if __name__ == "__main__":

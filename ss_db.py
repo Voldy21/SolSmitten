@@ -48,12 +48,16 @@ def insert_details(args):
     return user_id
 
 
-def add_image_url(url):
-    images = url
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO Users (images) VALUES (%s)", (images))
-    conn.commit()
-    cursor.close()
+def add_image_url(wrinkleUrl, originalUrl, wrinkleScore, userID, ):
+    try:
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO Images (user_id, wrinkle_link, original_link, wrinkles_score) VALUES (%s, %s, %s, %s)",
+                       (userID, wrinkleUrl, originalUrl, wrinkleScore))
+        conn.commit()
+        cursor.close()
+        return "succcess"
+    except:
+        return "failure"
 
 
 def delete_user_profile(name):
@@ -69,6 +73,14 @@ def delete_user_profile(name):
 
 
 def get_details():
+    cursor = conn.cursor()
+    cursor.execute("SELECT *  FROM Users")
+    details = cursor.fetchall()
+    cursor.close()
+    return details
+
+
+def insertImageDetails():
     cursor = conn.cursor()
     cursor.execute("SELECT *  FROM Users")
     details = cursor.fetchall()

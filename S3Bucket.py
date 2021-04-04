@@ -71,15 +71,16 @@ def uploadFileToS3FromStorage(location, fileName):
 
 class UploadImage(Resource):
     def post(self):
-
         parse = reqparse.RequestParser()
         parse.add_argument(
             'file', type=werkzeug.datastructures.FileStorage, location='/images')
+        parse.add_argument('user_id', type=int)
         args = parse.parse_args()
         print(args)
         image_file = args['file']
         if image_file:
             image_file.save("your_file_name.jpg")
+        return "hello"
 
 
 def upload_file(file_name, bucket):
