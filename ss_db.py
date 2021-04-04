@@ -49,11 +49,11 @@ def insert_details(args):
 
 def add_image_details(args):
     file_id = args['File Id']
-    name = args['Name']
     image_link = args['Image Link']
     blackspots_score = args['Blackspots Score']
     acne_score = args['Acne Score']
     wrinkles_score = args['Wrinkles Score']
+    name = args['Name']
     user_id = args['User Id']
     date = args['Date']
     cursor = conn.cursor()
@@ -127,5 +127,15 @@ def delete_all():
     except:
         return "Failure"
 
-#def assign_image_name():
+# def assign_image_name(acne_score, blackspots_score, wrinkles_score):
+#     if acne_score > blackspots_score and acne_score > wrinkles_score:
+#         # Give name "acne*UserName**ImageNumber*"
+#         image_name = "acne"
+#     elif blackspots_score > acne_score and blackspots_score > wrinkles_score:
+#         # Give name "blackspots*UserName**ImageNumber*"
+#         image_name = "Blackspots"
+#     else:
+#         # Give name "wrinkles*UserName**ImageNumber*"
+#         image_name = "wrinkles"
+#     return image_name
 

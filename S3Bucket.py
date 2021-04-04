@@ -28,13 +28,13 @@ def listItemsInBucket():
     my_bucket = s3_resource.Bucket(bucket_name)
     s3_client = boto3.client('s3')
 
-    for bucket in s3_resource.buckets.all():
-        print(bucket.name)
+    # for bucket in s3_resource.buckets.all():
+    #     print(bucket.name)
 
-    for file in my_bucket.objects.all():
-        params = {'Bucket': bucket_name, 'Key': file.key}
-        url = s3_client.generate_presigned_url('get_object', params)
-        print(url)
+    # for file in my_bucket.objects.all():
+    #     params = {'Bucket': bucket_name, 'Key': file.key}
+    #     url = s3_client.generate_presigned_url('get_object', params)
+    #     print(url)
 
 
 def getItem(itemName):
