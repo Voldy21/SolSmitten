@@ -6,8 +6,6 @@ from flask_restful import Api, Resource, reqparse
 signup_args = reqparse.RequestParser()
 
 
-
-
 def initSignup():
 
     signup_args.add_argument("First name", type=str,
@@ -33,12 +31,9 @@ def initSignup():
                              help="Username is required", required=True)
 
 
-
-
-
 class SignUp(Resource):
     def post(self):
         initSignup()
         args = signup_args.parse_args()
-        db.insert_details(args)
-        return {"user": args}
+        user_id = db.insert_details(args)
+        return {"user": user_id}

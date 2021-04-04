@@ -105,5 +105,10 @@ def wrinkleDetection(imgLocation, fileName):
         cropped_img[10:maxY, leftX:rightX + w2] = img1_bg
         img[y:y + h, x:x + w] = cropped_img
 
+<<<<<<< HEAD
         x = cv2.imwrite("something.png", img)
         return x
+=======
+        cv2.imshow("forehead_edges", img)
+        cv2.waitKey(0)
+>>>>>>> 5e82caf0eec436c2d32cffb28e09c981bdaea960

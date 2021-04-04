@@ -40,7 +40,12 @@ def insert_details(args):
     cursor.execute("INSERT INTO Users (FirstName, LastName, email, skinFeel, password, sensitivity, goals, age, stress, skinType, username) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s)",
                    (firstName, lastName, email, skinFeel, password, sensitivty, goals, age, stress, skinType, username))
     conn.commit()
+    cursor.execute(
+        "SELECT * FROM Users WHERE username=%s", (username))
+    user_id = cursor.fetchone()
+    conn.commit()
     cursor.close()
+    return user_id
 
 
 def add_image_url(url):
@@ -69,6 +74,18 @@ def get_details():
     details = cursor.fetchall()
     cursor.close()
     return details
+
+
+def getUser_ID(username):
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT primary_key FROM Users WHERE username=%s", (username))
+        details = cursor.fetchone()
+        cursor.close()
+        return details
+    except:
+        return "failure"
 
 
 def login(args):
