@@ -39,14 +39,26 @@ def getItem(itemName):
     url = s3_client.generate_presigned_url('get_object', params)
     print(url)
 
+
 # Upload a new file
+def uploadFileToS3(img, fileName):
+    bucket_name = 'solsmitten-bucket'
+    params = {'Bucket': bucket_name, 'Key': fileName}
+    bucket_name = 'solsmitten-bucket'
+    s3_client = boto3.client('s3')
+    s3_client.put_object(Key=fileName, Body=data, Bucket=bucket_name)
+    url = s3_client.generate_presigned_url('get_object', params)
+    return url
+
+# Upload a new file from disk
 
 
-def uploadFileToS3(fileName):
+def uploadFileToS3FromStorage(img, fileName):
+    bucket_name = 'solsmitten-bucket'
+    params = {'Bucket': bucket_name, 'Key': fileName}
     bucket_name = 'solsmitten-bucket'
     s3_client = boto3.client('s3')
     data = open(fileName, 'rb')
     s3_client.put_object(Key=fileName, Body=data, Bucket=bucket_name)
-
-
-getItem("basevase.png")
+    url = s3_client.generate_presigned_url('get_object', params)
+    return url

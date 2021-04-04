@@ -10,6 +10,7 @@ from s3_functions import UploadImage
 from s3_functions import list_files, download_file, upload_file
 from werkzeug.utils import secure_filename
 from S3Bucket import uploadFileToS3
+from wrinkleDetection import wrinkleDetection
 
 BUCKET = "elasticbeanstalk-us-east-1-671261739394"
 
@@ -34,13 +35,17 @@ def hello():
     return string
 
 
-@application.route('/uploader', methods=['GET', 'POST'])
+@application.route('/uploader', methods=['POST'])
 def upload_file_route():
     if request.method == 'POST':
-        f = request.files['file']
-        print(f)
-        f.save(secure_filename(f.filename))
-        return 'file uploaded successfully'
+        if request.files:
+            f = request.files['file']
+            url = uploadFileToS3(f, f.filename)
+            x = wrinkleDetection(url, fileName)
+            urlSplit = url.split(".")
+            uploadFileToS3(x, f'{urlSplit[0]}-wd.{urlSplit[1]}')
+            return 'file uploaded successfully'
+        return "failed"
 
 
 api.add_resource(UploadImage, "/upload")

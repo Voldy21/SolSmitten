@@ -3,7 +3,7 @@ import numpy as np
 from urllib.request import urlopen
 
 
-def wrinkleDetection(imgLocation):
+def wrinkleDetection(imgLocation, fileName):
 
     def resize(img, scale_percent):
         width = int(img.shape[1] * scale_percent / 100)
@@ -24,8 +24,6 @@ def wrinkleDetection(imgLocation):
     req = urlopen(imgLocation)
     arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
     img = cv2.imdecode(arr, -1)  # 'Load it as it is'
-    cv2.imshow("picture", img)
-    cv2.waitKey(0)
     while img.shape[0] > 400:
         img = resize(img, 50)
     while img.shape[0] < 200:
@@ -107,9 +105,5 @@ def wrinkleDetection(imgLocation):
         cropped_img[10:maxY, leftX:rightX + w2] = img1_bg
         img[y:y + h, x:x + w] = cropped_img
 
-        cv2.imshow("forehead_edges", img)
-        cv2.waitKey(0)
-
-
-wrinkleDetection(
-    'https://www.isdin.com/en-US/blog/wp-content/uploads/2020/08/how_to_get_rid_of_forehead_wrinkles_header-1170x600.jpg')
+        x = cv2.imwrite("something.png", img)
+        return x
