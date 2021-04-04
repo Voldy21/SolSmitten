@@ -22,6 +22,8 @@ s3_client = boto3.client('s3')
 s3_resource = boto3.resource('s3')
 my_bucket = s3_resource.Bucket(bucket_name)
 
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+
 
 def listItemsInBucket():
     bucket_name = 'solsmitten-bucket'
@@ -45,30 +47,42 @@ def getItem(itemName):
     url = s3_client.generate_presigned_url('get_object', params)
     print(url)
 
+
 # Upload a new file
-
-
-def uploadFileToS3(fileName):
+def uploadFileToS3(img, fileName):
     bucket_name = 'solsmitten-bucket'
+    params = {'Bucket': bucket_name, 'Key': fileName}
+    bucket_name = 'solsmitten-bucket'
+    s3_client = boto3.client('s3')
+    s3_client.put_object(Key=fileName, Body=img, Bucket=bucket_name)
+    url = s3_client.generate_presigned_url('get_object', params)
+    return url
+
+# Upload a new file from disk
+
+
+def uploadFileToS3FromStorage(location, fileName):
+    bucket_name = 'solsmitten-bucket'
+    params = {'Bucket': bucket_name, 'Key': fileName}
     s3_client = boto3.client('s3')
     data = open(fileName, 'rb')
     s3_client.put_object(Key=fileName, Body=data, Bucket=bucket_name)
-
-
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+    url = s3_client.generate_presigned_url('get_object', params)
+    return url
 
 
 class UploadImage(Resource):
     def post(self):
-
         parse = reqparse.RequestParser()
         parse.add_argument(
             'file', type=werkzeug.datastructures.FileStorage, location='/images')
+        parse.add_argument('user_id', type=int)
         args = parse.parse_args()
         print(args)
         image_file = args['file']
         if image_file:
             image_file.save("your_file_name.jpg")
+        return "hello"
 
 
 def upload_file(file_name, bucket):

@@ -1,9 +1,10 @@
 import cv2
 import numpy as np
 from urllib.request import urlopen
+import os
 
 
-def wrinkleDetection(imgLocation):
+def wrinkleDetection(imgLocation, fileName):
 
     def resize(img, scale_percent):
         width = int(img.shape[1] * scale_percent / 100)
@@ -24,8 +25,6 @@ def wrinkleDetection(imgLocation):
     req = urlopen(imgLocation)
     arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
     img = cv2.imdecode(arr, -1)  # 'Load it as it is'
-    cv2.imshow("picture", img)
-    cv2.waitKey(0)
     while img.shape[0] > 400:
         img = resize(img, 50)
     while img.shape[0] < 200:
@@ -106,6 +105,7 @@ def wrinkleDetection(imgLocation):
         img1_bg = cv2.bitwise_or(forehead_edges, forehead)
         cropped_img[10:maxY, leftX:rightX + w2] = img1_bg
         img[y:y + h, x:x + w] = cropped_img
-
-        cv2.imshow("forehead_edges", img)
-        cv2.waitKey(0)
+        directory = os.path.join(os.path.dirname((__file__)), "images")
+        os.chdir(directory)
+        cv2.imwrite(fileName, img)
+        return np.count_nonzero(forehead_edges)
