@@ -57,7 +57,7 @@ def add_image_details(args):
     user_id = args['User Id']
     date = args['Date']
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO Images (file_id, name, image_link, blackspots_score, acne_score, wrinkles_score, user_id, date) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s)",
+    cursor.execute("INSERT INTO Images (file_id, name, image_link, blackspots_score, acne_score, wrinkles_score, user_id, date) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
                    (file_id, name, image_link, blackspots_score, acne_score, wrinkles_score, user_id, date))
     conn.commit()
     cursor.execute(
@@ -126,3 +126,6 @@ def delete_all():
         return "Success"
     except:
         return "Failure"
+
+#def assign_image_name():
+
