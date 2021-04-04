@@ -6,8 +6,7 @@ from flask_restful import Api, Resource, reqparse
 from signup_endpoint import SignUp
 from login_endpoint import Login
 from delete_endpoint import Delete
-from S3Bucket import UploadImage
-from S3Bucket import list_files, download_file, upload_file
+from S3Bucket import list_files, download_file, upload_file, UploadImage, uploadFileToS3FromStorage
 from werkzeug.utils import secure_filename
 from S3Bucket import uploadFileToS3
 from wrinkleDetection import wrinkleDetection
@@ -46,13 +45,17 @@ def upload_file_route():
     if request.method == 'POST':
         if request.files:
             f = request.files['file']
-            # url = uploadFileToS3(f, f.filename)
+            # save original image to s3 bucket
+            url = uploadFileToS3(f, f.filename)
+            # split name wrinkleDetection filename
             urlSplit = f.filename.split(".")
             wrinkleDetectionName = f'{urlSplit[0]}-wd.{urlSplit[1]}'
-            print(wrinkleDetectionName)
-            # x = wrinkleDetection(url, urlSplit)
-            # uploadFileToS3(x, f'{urlSplit[0]}-wd.{urlSplit[1]}')
-            return 'file uploaded successfully'
+            # send image through wrinkle detection
+            x = wrinkleDetection(url, wrinkleDetectionName)
+            # upload processed image to s3 bucket
+            uploadFileToS3FromStorage(os.path.join(
+                os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
+            return str(x)
         return "failed"
 
 

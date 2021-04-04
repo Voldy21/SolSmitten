@@ -61,10 +61,9 @@ def uploadFileToS3(img, fileName):
 # Upload a new file from disk
 
 
-def uploadFileToS3FromStorage(img, fileName):
+def uploadFileToS3FromStorage(location, fileName):
     bucket_name = 'solsmitten-bucket'
     params = {'Bucket': bucket_name, 'Key': fileName}
-    bucket_name = 'solsmitten-bucket'
     s3_client = boto3.client('s3')
     data = open(fileName, 'rb')
     s3_client.put_object(Key=fileName, Body=data, Bucket=bucket_name)

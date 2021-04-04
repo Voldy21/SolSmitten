@@ -1,2 +1,4 @@
-name = "jonah"
-print(f'Hello, {name}')
+import os
+
+print(os.path.join(os.path.dirname((__file__)), "images")
+      )
