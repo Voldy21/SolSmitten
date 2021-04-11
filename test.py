@@ -1,3 +1,3 @@
-x = "bananananana"
+a = None
 
-print(x.replace("a", "c"))
+print(any((, , , , ,)))

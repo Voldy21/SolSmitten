@@ -9,6 +9,10 @@ class Delete(Resource):
         response = db.delete_user_profile(name)
         return {"response": response}
 
+    def post(self, name):
+        response = db.delete_all_images()
+        return response
+
     # def post(self, name):
     #     response = db.delete_all()
     #     return {"response": response}

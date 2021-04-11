@@ -6,6 +6,7 @@ from flask_restful import Api, Resource, reqparse
 from signup_endpoint import SignUp
 from login_endpoint import Login
 from delete_endpoint import Delete
+from home import Base
 from S3Bucket import list_files, download_file, upload_file, UploadImage, uploadFileToS3FromStorage
 from werkzeug.utils import secure_filename
 from S3Bucket import uploadFileToS3
@@ -25,6 +26,7 @@ api.add_resource(Login, "/login")
 api.add_resource(SignUp, "/signup")
 api.add_resource(Delete, "/delete/<string:name>")
 api.add_resource(UploadImage, "/upload")
+api.add_resource(Base, "/home")
 
 
 @application.route("/")
@@ -55,6 +57,7 @@ def Images():
 def upload_file_route():
     if request.method == 'POST':
         if request.files:
+            "46-wd-4-10-21 1-20-21.jpg"
             # try:
             timeStamp = str(datetime.datetime.now()).split('.')[
                 0].replace(":", "-")
@@ -69,10 +72,14 @@ def upload_file_route():
             # send image through wrinkle detection
             wrinkleScore = wrinkleDetection(
                 originalURL, wrinkleDetectionName)
+            if wrinkleScore == 0:
+                return "failure"
+            print(wrinkleScore)
+
             # upload processed image to s3 bucket
             wrinkleURL = uploadFileToS3FromStorage(os.path.join(
                 os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
-            x = db.insert_image_details(
+            db.insert_image_details(
                 wrinkleURL, originalURL, wrinkleScore, user_id)
             return "success"
             # except:
