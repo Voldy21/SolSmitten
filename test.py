@@ -1,4 +1,3 @@
-import os
+a = None
 
-print(os.path.join(os.path.dirname((__file__)), "images")
-      )
+print(any((, , , , ,)))

@@ -48,16 +48,16 @@ def insert_details(args):
     return user_id
 
 
-def add_image_url(wrinkleUrl, originalUrl, wrinkleScore, userID, ):
-    try:
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO Images (user_id, wrinkle_link, original_link, wrinkles_score) VALUES (%s, %s, %s, %s)",
-                       (userID, wrinkleUrl, originalUrl, wrinkleScore))
-        conn.commit()
-        cursor.close()
-        return "succcess"
-    except:
-        return "failure"
+def insert_image_details(wrinkleUrl, originalUrl, wrinkleScore, userID, ):
+    # try:
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO images (user_id, wrinkle_link, original_link, wrinkle_score) VALUES (%s, %s, %s, %s)",
+                   (userID, wrinkleUrl, originalUrl, wrinkleScore))
+    conn.commit()
+    cursor.close()
+    return "succcess"
+    # except:
+    #     return "failure"
 
 
 def delete_user_profile(name):
@@ -75,6 +75,22 @@ def delete_user_profile(name):
 def get_details():
     cursor = conn.cursor()
     cursor.execute("SELECT *  FROM Users")
+    details = cursor.fetchall()
+    cursor.close()
+    return details
+
+
+def get_Image_details():
+    cursor = conn.cursor()
+    cursor.execute("SELECT *  FROM images")
+    details = cursor.fetchall()
+    cursor.close()
+    return details
+
+
+def get_user_Image_details(user_id):
+    cursor = conn.cursor()
+    cursor.execute("SELECT *  FROM images WHERE user_id=%s", [user_id])
     details = cursor.fetchall()
     cursor.close()
     return details
@@ -119,3 +135,23 @@ def delete_all():
         return "Success"
     except:
         return "Failure"
+
+
+def delete_all_images():
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM images")
+        cursor.close()
+        return "Success"
+    except:
+        return "Failure"
+
+
+def getData(args):
+    user_id = int(args['user_id'])
+    print(user_id)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM images WHERE user_id=%s", [user_id])
+    details = cursor.fetchall()
+    cursor.close()
+    return details
