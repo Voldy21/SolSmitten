@@ -1,3 +1,1 @@
 a = None
-
-print(any((, , , , ,)))
