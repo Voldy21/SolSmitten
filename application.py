@@ -9,7 +9,7 @@ from delete_endpoint import Delete
 from s3_functions import list_files, download_file, upload_file
 
 BUCKET = "elasticbeanstalk-us-east-1-671261739394"
-
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 application = Flask(__name__)
 api = Api(application)
@@ -31,11 +31,25 @@ def hello():
 
 class Upload(Resource):
     def post(self):
+        target = os.path.join(APP_ROOT,'images/')
+        # print(target)
+        if not os.path.isdir(target):
+            os.mkdir(target)
         try:
-            f = request.files['file']
-            f.save(os.path.join(UPLOAD_FOLDER, f.filename))
-            upload_file(f"uploads/{f.filename}", BUCKET)
+            file = request.files['file']
+            # ASK Jonah for clarification on upload_folder
+            destination = '/'.join([target,f.filename])
+            file.save(destination)
+            upload_file(f"{destination}", BUCKET)
+            
+            # RUN MODEL
+            model.save('model_weights.pth')
+            predictions = model.predict(destination)
+            labels, boxes, scores = predictions
 
+            print(labels) 
+            print(boxes)
+            print(scores)
             return {"response", "Success!"}
         except:
             return {"response", "Failed"}
