@@ -40,19 +40,30 @@ def insert_details(args):
     cursor.execute("INSERT INTO Users (FirstName, LastName, email, skinFeel, password, sensitivity, goals, age, stress, skinType, username) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s, %s, %s)",
                    (firstName, lastName, email, skinFeel, password, sensitivty, goals, age, stress, skinType, username))
     conn.commit()
-    cursor.close()
-
-def add_image_url(url):
-    images = url
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO Users (images) VALUES (%s)", (images))
+    cursor.execute(
+        "SELECT * FROM Users WHERE username=%s", (username))
+    user_id = cursor.fetchone()
     conn.commit()
     cursor.close()
+    return user_id
+
+
+def insert_image_details(wrinkleUrl, originalUrl, wrinkleScore, userID, ):
+    # try:
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO images (user_id, wrinkle_link, original_link, wrinkle_score) VALUES (%s, %s, %s, %s)",
+                   (userID, wrinkleUrl, originalUrl, wrinkleScore))
+    conn.commit()
+    cursor.close()
+    return "succcess"
+    # except:
+    #     return "failure"
+
 
 def delete_user_profile(name):
     try:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM Users WHERE firstName=%s", [name])
+        cursor.execute("DELETE FROM Users WHERE lastName=%s", [name])
         cursor.close()
         return "Success"
     except:
@@ -69,12 +80,78 @@ def get_details():
     return details
 
 
+def get_Image_details():
+    cursor = conn.cursor()
+    cursor.execute("SELECT *  FROM images")
+    details = cursor.fetchall()
+    cursor.close()
+    return details
+
+
+def get_user_Image_details(user_id):
+    cursor = conn.cursor()
+    cursor.execute("SELECT *  FROM images WHERE user_id=%s", [user_id])
+    details = cursor.fetchall()
+    cursor.close()
+    return details
+
+
+def insertImageDetails():
+    cursor = conn.cursor()
+    cursor.execute("SELECT *  FROM Users")
+    details = cursor.fetchall()
+    cursor.close()
+    return details
+
+
+def getUser_ID(username):
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT primary_key FROM Users WHERE username=%s", (username))
+        details = cursor.fetchone()
+        cursor.close()
+        return details
+    except:
+        return "failure"
+
+
 def login(args):
     username = args.username
     password = args.password
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute(
         "SELECT * FROM Users WHERE username=%s AND password=%s", [username, password])
+    details = cursor.fetchall()
+    cursor.close()
+    return details
+
+
+def delete_all():
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Users WHERE firstName=%s", ["b%"])
+        cursor.close()
+        return "Success"
+    except:
+        return "Failure"
+
+
+def delete_all_images():
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM images")
+        cursor.close()
+        return "Success"
+    except:
+        return "Failure"
+
+
+def getData(args):
+    user_id = int(args['user_id'])
+    print(user_id)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM images WHERE user_id=%s", [user_id])
     details = cursor.fetchall()
     cursor.close()
     return details

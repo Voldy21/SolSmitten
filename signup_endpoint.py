@@ -2,6 +2,7 @@ from flask import Flask, jsonify, make_response
 import ss_db as db
 from flask_restful import Api, Resource, reqparse
 
+
 signup_args = reqparse.RequestParser()
 
 
@@ -34,5 +35,5 @@ class SignUp(Resource):
     def post(self):
         initSignup()
         args = signup_args.parse_args()
-        db.insert_details(args)
-        return {"user": args}
+        user_id = db.insert_details(args)
+        return {"user": user_id}
