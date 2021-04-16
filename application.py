@@ -97,15 +97,21 @@ def upload_file_route():
                 os.path.dirname((__file__)), "images", fileName))
             # split name wrinkleDetection filename
             wrinkleDetectionName = f'{user_id}-wd-{unique_id}.{urlSplit[1]}'
+            acneDetectionName = f'{user_id}-ad-{unique_id}.{urlSplit[1]}'
             # # send image through wrinkle detection
             wrinkleScore = wrinkleDetection(
                 fileName, wrinkleDetectionName)
             # save original image to s3 bucket
             originalURL = uploadFileToS3FromStorage(os.path.join(
                 os.path.dirname((__file__)), "images", fileName), fileName)
+
             # upload processed image to s3 bucket
             wrinkleURL = uploadFileToS3FromStorage(os.path.join(
                 os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
+            # acneScore = acneDetection(fileName, acneDetectionName)
+            # send the processed image to s3 bucket
+            acneScore = acneDetection(location, acneURL)
+
             db.insert_image_details(
                 wrinkleURL, originalURL, wrinkleScore, user_id)
             if os.path.exists(os.path.join("images", fileName)):
