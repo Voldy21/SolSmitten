@@ -102,7 +102,7 @@ def download_file(file_name):
     """
     s3 = boto3.client('s3')
     output = f"downloads/{file_name}"
-    s3.download_file('solsmitten-bucket', file_name, "test.jpg")
+    s3.download_file('solsmitten-bucket', file_name, "images/test.jpg")
     return "test.jpg"
 
 
