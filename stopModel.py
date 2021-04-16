@@ -20,7 +20,7 @@ def stop_model(model_arn):
     
 def main():
     
-    model_arn='arn:aws:rekognition:us-east-2:975799719914:project/acneDetection/version/acneDetection.2021-04-04T11.35.22/1617550522329'
+    model_arn='arn:aws:rekognition:us-east-1:697756607889:project/acneDetection/version/acneDetection.2021-04-15T17.00.32/1618520432917'
     stop_model(model_arn)
 
 if __name__ == "__main__":
