@@ -11,8 +11,12 @@ from S3Bucket import list_files, download_file, upload_file, UploadImage, upload
 from werkzeug.utils import secure_filename
 from S3Bucket import uploadFileToS3
 from wrinkleDetection import wrinkleDetection
+from startModel import start_model
+from stopModel import stop_model
+from analyzeImage import  show_custom_labels
 import datetime
 import uuid
+
 
 
 BUCKET = "elasticbeanstalk-us-east-1-671261739394"
@@ -98,19 +102,20 @@ def upload_file_route():
             # split name wrinkleDetection filename
             wrinkleDetectionName = f'{user_id}-wd-{unique_id}.{urlSplit[1]}'
             acneDetectionName = f'{user_id}-ad-{unique_id}.{urlSplit[1]}'
+
+
+
             # # send image through wrinkle detection
             wrinkleScore = wrinkleDetection(
                 fileName, wrinkleDetectionName)
             # save original image to s3 bucket
             originalURL = uploadFileToS3FromStorage(os.path.join(
                 os.path.dirname((__file__)), "images", fileName), fileName)
-
             # upload processed image to s3 bucket
             wrinkleURL = uploadFileToS3FromStorage(os.path.join(
                 os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
-            # acneScore = acneDetection(fileName, acneDetectionName)
-            # send the processed image to s3 bucket
-            acneScore = acneDetection(location, acneURL)
+
+            show_custom_labels(fileName,acneFileName)
 
             db.insert_image_details(
                 wrinkleURL, originalURL, wrinkleScore, user_id)
