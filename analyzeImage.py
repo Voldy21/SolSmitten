@@ -1,8 +1,12 @@
+#Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+
 import boto3
 import io
 from PIL import Image, ImageDraw, ExifTags, ImageColor, ImageFont
-
-def display_image(bucket,photo,response):
+from S3Bucket import uploadFileToS3
+from startModel import  start_model
+from stopModel import stop_model
+def display_image(bucket,photo,response,acneFileName):
     # Load image from S3 bucket
     s3_connection = boto3.resource('s3')
 
@@ -43,10 +47,26 @@ def display_image(bucket,photo,response):
                 (left , top + height),
                 (left, top))
             draw.line(points, fill='#00d400', width=5)
-
+    
+    uploadFileToS3(image,acneFileName)
     image.show()
 
-def show_custom_labels(model,bucket,photo, min_confidence):
+def show_custom_labels(photo,acneFileName):
+
+    bucket='solsmitten-bucket'
+    model='arn:aws:rekognition:us-east-1:697756607889:project/acneDetection/version/acneDetection.2021-04-15T17.00.32/1618520432917'
+    min_confidence=50
+
+    # Start Model parameters required
+    project_arn='arn:aws:rekognition:us-east-2:975799719914:project/acneDetection/1617548260281'
+    model_arn='arn:aws:rekognition:us-east-2:975799719914:project/acneDetection/version/acneDetection.2021-04-04T11.35.22/1617550522329'
+    min_inference_units=1 
+    version_name='acneDetection.2021-04-04T11.35.22'
+
+
+    start_model(project_arn, model_arn, version_name, min_inference_units)
+
+
     client=boto3.client('rekognition')
 
     #Call DetectCustomLabels
@@ -54,16 +74,14 @@ def show_custom_labels(model,bucket,photo, min_confidence):
         MinConfidence=min_confidence,
         ProjectVersionArn=model)
 
-    display_image(bucket,photo,response)
+    display_image(bucket,photo,response,acneFileName)
 
+    stop_model(model_arn)
     return len(response['CustomLabels'])
 
 def main():
 
-    bucket='MY_BUCKET'
-    photo='MY_IMAGE_KEY'
-    model='arn:aws:rekognition:us-east-2:975799719914:project/acneDetection/version/acneDetection.2021-04-04T11.35.22/1617550522329'
-    min_confidence=95
+    
 
     label_count=show_custom_labels(model,bucket,photo, min_confidence)
     print("Custom labels detected: " + str(label_count))
