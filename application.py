@@ -12,6 +12,8 @@ from werkzeug.utils import secure_filename
 from S3Bucket import uploadFileToS3
 from wrinkleDetection import wrinkleDetection
 import datetime
+import uuid
+
 
 BUCKET = "elasticbeanstalk-us-east-1-671261739394"
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -84,35 +86,37 @@ def Images():
 def upload_file_route():
     if request.method == 'POST':
         if request.files:
-            "46-wd-4-10-21 1-20-21.jpg"
             # try:
-            timeStamp = str(datetime.datetime.now()).split('.')[
-                0].replace(":", "-")
+            unique_id = uuid.uuid4()
             f = request.files['file']
             urlSplit = f.filename.split(".")
             user_id = urlSplit[0]
-            fileName = f'{user_id}-{timeStamp}.{urlSplit[1]}'
-            # save original image to s3 bucket
-            originalURL = uploadFileToS3(f, fileName)
+            fileName = f'{user_id}-{unique_id}.{urlSplit[1]}'
+            # Save file on disc
+            f.save(os.path.join(
+                os.path.dirname((__file__)), "images", fileName))
             # split name wrinkleDetection filename
-            wrinkleDetectionName = f'{user_id}-wd-{timeStamp}.{urlSplit[1]}'
-            # send image through wrinkle detection
+            wrinkleDetectionName = f'{user_id}-wd-{unique_id}.{urlSplit[1]}'
+            # # send image through wrinkle detection
             wrinkleScore = wrinkleDetection(
-                originalURL, wrinkleDetectionName)
-            if wrinkleScore == 0:
-                return "failure"
-            print(wrinkleScore)
-
+                fileName, wrinkleDetectionName)
+            # save original image to s3 bucket
+            originalURL = uploadFileToS3FromStorage(os.path.join(
+                os.path.dirname((__file__)), "images", fileName), fileName)
             # upload processed image to s3 bucket
             wrinkleURL = uploadFileToS3FromStorage(os.path.join(
                 os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
             db.insert_image_details(
                 wrinkleURL, originalURL, wrinkleScore, user_id)
-            return "success"
+            if os.path.exists(os.path.join("images", fileName)):
+                os.remove(os.path.join("images", fileName))
+            if os.path.exists(wrinkleDetectionName):
+                os.remove(wrinkleDetectionName)
+            return {"message": "success"}
             # except:
             #     return "failed"
             # return str(x)
-        return "failed"
+        return {"message", "failure"}
 
 
 if __name__ == "__main__":
