@@ -44,32 +44,7 @@ def hello():
     return string
 
 
-<<<<<<< HEAD
-class Upload(Resource):
-    def post(self):
-        target = os.path.join(APP_ROOT,'images/')
-        # print(target)
-        if not os.path.isdir(target):
-            os.mkdir(target)
-        try:
-            file = request.files['file']
-            # ASK Jonah for clarification on upload_folder
-            destination = '/'.join([target,f.filename])
-            file.save(destination)
-            upload_file(f"{destination}", BUCKET)
-            
-            # RUN MODEL
-            model.save('model_weights.pth')
-            predictions = model.predict(destination)
-            labels, boxes, scores = predictions
 
-            print(labels) 
-            print(boxes)
-            print(scores)
-            return {"response", "Success!"}
-        except:
-            return {"response", "Failed"}
-=======
 @application.route("/images")
 def Images():
     details = db.get_Image_details()
@@ -78,12 +53,6 @@ def Images():
     }
     return string
 
-
-# @application.route("/<username>")
-# def find(username):
-#     details = db.getUser_ID(username)
-#     return {"user_id": details['primary_key']}
->>>>>>> 2b5cae02c5cfafe88a59e5c03571a7cd3e935c26
 
 
 @application.route('/uploader', methods=['GET', 'POST'])
