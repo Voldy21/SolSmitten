@@ -68,15 +68,15 @@ def add_image_details(args):
     return file_id
 
 def insert_image_details(wrinkleUrl, originalUrl, wrinkleScore, userID, ):
-    try:
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO Images (user_id, wrinkle_link, original_link, wrinkles_score) VALUES (%s, %s, %s, %s)",
-                       (userID, wrinkleUrl, originalUrl, wrinkleScore))
-        conn.commit()
-        cursor.close()
-        return "succcess"
-    except:
-        return "failure"
+    # try:
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO images (user_id, wrinkle_link, original_link, wrinkle_score) VALUES (%s, %s, %s, %s)",
+                   (userID, wrinkleUrl, originalUrl, wrinkleScore))
+    conn.commit()
+    cursor.close()
+    return "succcess"
+    # except:
+    #     return "failure"
 
 
 def delete_user_profile(name):
@@ -101,7 +101,15 @@ def get_details():
 
 def get_Image_details():
     cursor = conn.cursor()
-    cursor.execute("SELECT *  FROM Image")
+    cursor.execute("SELECT *  FROM images")
+    details = cursor.fetchall()
+    cursor.close()
+    return details
+
+
+def get_user_Image_details(user_id):
+    cursor = conn.cursor()
+    cursor.execute("SELECT *  FROM images WHERE user_id=%s", [user_id])
     details = cursor.fetchall()
     cursor.close()
     return details
@@ -147,15 +155,22 @@ def delete_all():
     except:
         return "Failure"
 
-# def assign_image_name(acne_score, blackspots_score, wrinkles_score, user_name):
-#     if acne_score > blackspots_score and acne_score > wrinkles_score:
-#         # Give name "acne*UserName**ImageNumber*"
-#         image_name = "acne"
-#     elif blackspots_score > acne_score and blackspots_score > wrinkles_score:
-#         # Give name "blackspots*UserName**ImageNumber*"
-#         image_name = "Blackspots"
-#     else:
-#         # Give name "wrinkles*UserName**ImageNumber*"
-#         image_name = "wrinkles"
-#     return image_name
 
+def delete_all_images():
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM images")
+        cursor.close()
+        return "Success"
+    except:
+        return "Failure"
+
+
+def getData(args):
+    user_id = int(args['user_id'])
+    print(user_id)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM images WHERE user_id=%s", [user_id])
+    details = cursor.fetchall()
+    cursor.close()
+    return details
