@@ -8,7 +8,7 @@ from flask import Flask, jsonify, make_response, request
 import boto3
 import os
 import werkzeug
-from flask_restful import Resource, reqparse, Api
+#from flask_restful import Resource, reqparse, Api
 
 ACCESS_KEY_ID = ''
 ACCESS_SECRET_KEY = ''
@@ -49,13 +49,16 @@ def getItem(itemName):
 
 
 # Upload a new file
-def uploadFileToS3(img, fileName):
+def uploadFileToS3(img, fileName, folder_path):
     bucket_name = 'solsmitten-bucket'
+    s3 = boto3.resource('s3')
     params = {'Bucket': bucket_name, 'Key': fileName}
-    bucket_name = 'solsmitten-bucket'
-    s3_client = boto3.client('s3')
-    s3_client.put_object(Key=fileName, Body=img, Bucket=bucket_name)
+    # for folder in s3_client.list_objects(Bucket=bucket_name):
+    #     if folder == folder_path:
+    s3.Bucket(bucket_name).upload_file(img, '%s/%s' %(folder_path, img))
     url = s3_client.generate_presigned_url('get_object', params)
+    print("image in bucket")
+
     return url
 
 # Upload a new file from disk
@@ -71,18 +74,18 @@ def uploadFileToS3FromStorage(location, fileName):
     return url
 
 
-class UploadImage(Resource):
-    def post(self):
-        parse = reqparse.RequestParser()
-        parse.add_argument(
-            'file', type=werkzeug.datastructures.FileStorage, location='/images')
-        parse.add_argument('user_id', type=int)
-        args = parse.parse_args()
-        print(args)
-        image_file = args['file']
-        if image_file:
-            image_file.save("your_file_name.jpg")
-        return "hello"
+# class UploadImage(Resource):
+#     def post(self):
+#         parse = reqparse.RequestParser()
+#         parse.add_argument(
+#             'file', type=werkzeug.datastructures.FileStorage, location='/images')
+#         parse.add_argument('user_id', type=int)
+#         args = parse.parse_args()
+#         print(args)
+#         image_file = args['file']
+#         if image_file:
+#             image_file.save("your_file_name.jpg")
+#         return "hello"
 
 
 def upload_file(file_name, bucket):
@@ -117,3 +120,12 @@ def list_files(bucket):
         contents.append(item)
 
     return contents
+
+def create_user_folder(user_name):
+    folder_name = user_name + "_images"
+  
+    s3_client.put_object(Bucket=bucket_name, Key=(folder_name+'/'))
+
+    return folder_name
+
+

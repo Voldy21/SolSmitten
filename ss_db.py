@@ -147,7 +147,7 @@ def delete_all():
     except:
         return "Failure"
 
-# def assign_image_name(acne_score, blackspots_score, wrinkles_score):
+# def assign_image_name(acne_score, blackspots_score, wrinkles_score, user_name):
 #     if acne_score > blackspots_score and acne_score > wrinkles_score:
 #         # Give name "acne*UserName**ImageNumber*"
 #         image_name = "acne"
