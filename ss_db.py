@@ -47,6 +47,25 @@ def insert_details(args):
     cursor.close()
     return user_id
 
+def add_image_details(args):
+    file_id = args['File Id']
+    image_link = args['Image Link']
+    blackspots_score = args['Blackspots Score']
+    acne_score = args['Acne Score']
+    wrinkles_score = args['Wrinkles Score']
+    name = args['Name']
+    user_id = args['User Id']
+    date = args['Date']
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO Images (file_id, name, image_link, blackspots_score, acne_score, wrinkles_score, user_id, date) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
+                   (file_id, name, image_link, blackspots_score, acne_score, wrinkles_score, user_id, date))
+    conn.commit()
+    cursor.execute(
+        "SELECT * FROM Users WHERE username=%s", (user_id))
+    file_id = cursor.fetchone()
+    conn.commit()
+    cursor.close()
+    return file_id
 
 def update_details(args):
     email = args['Email']

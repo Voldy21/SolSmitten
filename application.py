@@ -7,9 +7,8 @@ from signup_endpoint import SignUp
 from login_endpoint import Login
 from delete_endpoint import Delete
 from home import Base, BaseData
-from S3Bucket import list_files, download_file, upload_file, UploadImage, uploadFileToS3FromStorage
+from S3Bucket import list_files, download_file, upload_file, uploadFileToS3FromStorage
 from werkzeug.utils import secure_filename
-from S3Bucket import uploadFileToS3
 from wrinkleDetection import wrinkleDetection, fixImage
 from startModel import start_model
 from stopModel import stop_model
@@ -30,7 +29,7 @@ CORS(application)
 api.add_resource(Login, "/login")
 api.add_resource(SignUp, "/signup")
 api.add_resource(Delete, "/delete/<string:name>")
-api.add_resource(UploadImage, "/upload")
+# api.add_resource(UploadImage, "/upload")
 api.add_resource(Base, "/home")
 api.add_resource(BaseData, "/home/<user_id>")
 
