@@ -6,17 +6,16 @@ from flask_restful import Api, Resource, reqparse
 from signup_endpoint import SignUp
 from login_endpoint import Login
 from delete_endpoint import Delete
-from home import Base
+from home import Base, BaseData
 from S3Bucket import list_files, download_file, upload_file, UploadImage, uploadFileToS3FromStorage
 from werkzeug.utils import secure_filename
 from S3Bucket import uploadFileToS3
-from wrinkleDetection import wrinkleDetection
+from wrinkleDetection import wrinkleDetection, fixImage
 from startModel import start_model
 from stopModel import stop_model
-from analyzeImage import  show_custom_labels
+from analyzeImage import show_custom_labels
 import datetime
 import uuid
-
 
 
 BUCKET = "elasticbeanstalk-us-east-1-671261739394"
@@ -33,6 +32,7 @@ api.add_resource(SignUp, "/signup")
 api.add_resource(Delete, "/delete/<string:name>")
 api.add_resource(UploadImage, "/upload")
 api.add_resource(Base, "/home")
+api.add_resource(BaseData, "/home/<user_id>")
 
 
 @application.route("/")
@@ -44,7 +44,6 @@ def hello():
     return string
 
 
-
 @application.route("/images")
 def Images():
     details = db.get_Image_details()
@@ -52,7 +51,6 @@ def Images():
         "info": details
     }
     return string
-
 
 
 @application.route('/uploader', methods=['GET', 'POST'])
@@ -66,33 +64,34 @@ def upload_file_route():
             user_id = urlSplit[0]
             fileName = f'{user_id}-{unique_id}.{urlSplit[1]}'
             # Save file on disc
-            f.save(os.path.join(
-                os.path.dirname((__file__)), "images", fileName))
+            imgPath = os.path.join(
+                os.path.dirname((__file__)), "images", fileName)
+            f.save(imgPath)
+
+            originalURL = fixImage(imgPath, fileName)
             # split name wrinkleDetection filename
             wrinkleDetectionName = f'{user_id}-wd-{unique_id}.{urlSplit[1]}'
             acneDetectionName = f'{user_id}-ad-{unique_id}.{urlSplit[1]}'
 
-
-
             # # send image through wrinkle detection
             wrinkleScore = wrinkleDetection(
-                fileName, wrinkleDetectionName)
-            # save original image to s3 bucket
-            originalURL = uploadFileToS3FromStorage(os.path.join(
-                os.path.dirname((__file__)), "images", fileName), fileName)
+                originalURL, wrinkleDetectionName)
             # upload processed image to s3 bucket
             wrinkleURL = uploadFileToS3FromStorage(os.path.join(
                 os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
-
-            show_custom_labels(fileName,acneFileName)
+            # Acne detection
+            # show_custom_labels(fileName, acneDetectionName)
 
             db.insert_image_details(
                 wrinkleURL, originalURL, wrinkleScore, user_id)
-            if os.path.exists(os.path.join("images", fileName)):
-                os.remove(os.path.join("images", fileName))
             if os.path.exists(wrinkleDetectionName):
                 os.remove(wrinkleDetectionName)
-            return {"message": "success"}
+            return {
+                "wrinkleURL": wrinkleURL,
+                "originalURL": originalURL,
+                "WrinkleScore": wrinkleScore,
+                "user_id": user_id
+            }
             # except:
             #     return "failed"
             # return str(x)

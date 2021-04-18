@@ -48,6 +48,31 @@ def insert_details(args):
     return user_id
 
 
+def update_details(args):
+    email = args['Email']
+    firstName = args['First name']
+    lastName = args['Last name']
+    password = args['Password']
+    skinType = args['Skin type']
+    skinFeel = args['Skin feel']
+    sensitivty = args['Sensitivity']
+    goals = args['Goals']
+    age = args['Age']
+    stress = args['Stress']
+    username = args['Username']
+    user_id = args['user_id']
+    cursor = conn.cursor()
+    cursor.execute("UPDATE Users SET FirstName = %s, LastName = %s, email = %s, skinFeel =%s, password =%s, sensitivity = %s, goals =%s, age =%s, stress =%s, skinType =%s, username =%s) WHERE primary_key = %s)",
+                   (firstName, lastName, email, skinFeel, password, sensitivty, goals, age, stress, skinType, username, user_id))
+    conn.commit()
+    cursor.execute(
+        "SELECT * FROM Users WHERE username=%s", (username))
+    user_id = cursor.fetchone()
+    conn.commit()
+    cursor.close()
+    return user_id
+
+
 def insert_image_details(wrinkleUrl, originalUrl, wrinkleScore, userID, ):
     # try:
     cursor = conn.cursor()
@@ -153,5 +178,15 @@ def getData(args):
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM images WHERE user_id=%s", [user_id])
     details = cursor.fetchall()
+    cursor.close()
+    return details
+
+
+def getName(args):
+    user_id = int(args['user_id'])
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT * FROM Users WHERE primary_key=%s", [user_id])
+    details = cursor.fetchone()
     cursor.close()
     return details

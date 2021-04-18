@@ -13,10 +13,23 @@ class Base(Resource):
     def post(self):
         home_args.add_argument("user_id", type=int)
         args = home_args.parse_args()
-        print(args)
         result = db.getData(args)
-        return {"message": result}
+        name = db.getName(args)
+        return {
+            "message": result,
+            "name": name}
 
-    def get(self):
-        download_file("50-020bb153-c4c6-4588-9d46-1b57e836532c.jpg")
-        return 0
+    def put(self):
+        home_args.add_argument("user_id", type=int)
+        args = home_args.parse_args()
+        name = db.getName(args)
+        return {"data": name}
+
+
+class BaseData(Resource):
+    def get(self, user_id):
+        try:
+            name = db.getName({"user_id": user_id})
+            return {"data": name}
+        except:
+            return {"message": "failed"}

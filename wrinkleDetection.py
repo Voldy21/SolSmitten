@@ -2,16 +2,60 @@ import cv2
 import numpy as np
 from urllib.request import urlopen
 import os
+from S3Bucket import uploadFileToS3FromStorage
 
 
-def wrinkleDetection(imgLocation, fileName):
-
+def fixImage(imgLocation, fileName):
     def resize(img, scale_percent):
         width = int(img.shape[1] * scale_percent / 100)
         height = int(img.shape[0] * scale_percent / 100)
         dim = (width, height)
         resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
         return resized
+
+    # Read the image
+    img = cv2.imread(imgLocation)
+    i = 0
+    while(np.logical_and(img is None, i < 4)):
+        img = cv2.imread(os.path.join("images", imgLocation))
+        i += 1
+
+    # call the haarcascade for finding a face
+    face_cascade = cv2.CascadeClassifier(
+        cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+
+    # readjust the image to be a certain size
+    while img.shape[0] > 500:
+        img = resize(img, 80)
+    while img.shape[0] < 300:
+        img = resize(img, 110)
+
+    # Try to find the face and rotate if cannot find
+    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    if len(gray_img) != 0:
+        faces = face_cascade.detectMultiScale(
+            gray_img, scaleFactor=1.1, minNeighbors=10)
+        i = 0
+        while(np.logical_and(len(faces) == 0, i < 4)):
+            img = cv2.rotate(img, cv2.cv2.ROTATE_90_COUNTERCLOCKWISE)
+            gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            faces = face_cascade.detectMultiScale(
+                gray_img, scaleFactor=1.1, minNeighbors=10)
+            i += 1
+
+        imagePath = os.path.join(os.path.dirname(
+            __file__), "images", fileName)
+        cv2.imwrite(imagePath, img)
+        imgURL = uploadFileToS3FromStorage(imagePath, fileName)
+        if os.path.exists(imagePath):
+            os.remove(imagePath)
+        return imgURL
+    else:
+        print("no image")
+        return "failure"
+
+
+def wrinkleDetection(imgLocation, fileName):
 
     lefteye_cascade = cv2.CascadeClassifier(
         cv2.data.haarcascades + "haarcascade_lefteye_2splits.xml")
@@ -20,18 +64,12 @@ def wrinkleDetection(imgLocation, fileName):
     face_cascade = cv2.CascadeClassifier(
         cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
-    # req = urlopen(imgLocation)
-    # arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
-    # img = cv2.imdecode(arr, -1)  # 'Load it as it is'
-    img = cv2.imread(os.path.join("images", imgLocation))
-    cv2.waitKey(0)
-
-    while img.shape[0] > 400:
-        img = resize(img, 80)
-    while img.shape[0] < 200:
-        img = resize(img, 110)
+    req = urlopen(imgLocation)
+    arr = np.asarray(bytearray(req.read()), dtype=np.uint8)
+    img = cv2.imdecode(arr, -1)  # 'Load it as it is'
 
     gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
     if len(gray_img) != 0:
         faces = face_cascade.detectMultiScale(
             gray_img, scaleFactor=1.1, minNeighbors=10)
@@ -40,13 +78,9 @@ def wrinkleDetection(imgLocation, fileName):
         print("no img")
         return "failure"
 
-    while(np.logical_and(len(faces) == 0, i < 4)):
-        img = cv2.rotate(img, cv2.cv2.ROTATE_90_COUNTERCLOCKWISE)
-        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade.detectMultiScale(
-            gray_img, scaleFactor=1.1, minNeighbors=10)
-        i += 1
-    cv2.imwrite(os.path.join("images", imgLocation), img)
+    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(
+        gray_img, scaleFactor=1.1, minNeighbors=10)
 
     for x, y, w, h in faces:
         cropped_img = img[y:y + h, x:x + w]

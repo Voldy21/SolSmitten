@@ -37,3 +37,9 @@ class SignUp(Resource):
         args = signup_args.parse_args()
         user_id = db.insert_details(args)
         return {"user": user_id}
+
+    def put(self):
+        initSignup()
+        args = signup_args.parse_args()
+        user_id = db.update_details(args)
+        return {"user": user_id}

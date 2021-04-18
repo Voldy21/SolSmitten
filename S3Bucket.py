@@ -12,7 +12,7 @@ from flask_restful import Resource, reqparse, Api
 
 ACCESS_KEY_ID = ''
 ACCESS_SECRET_KEY = ''
-bucket_name = 'solsmitten-bucket'
+bucket_name = 'solsmitten-bucket-2'
 
 # s3 = boto3.client(
 #     's3',
@@ -26,7 +26,7 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 
 def listItemsInBucket():
-    bucket_name = 'solsmitten-bucket'
+    bucket_name = 'solsmitten-bucket-2'
     my_bucket = s3_resource.Bucket(bucket_name)
     s3_client = boto3.client('s3')
 
@@ -40,7 +40,7 @@ def listItemsInBucket():
 
 
 def getItem(itemName):
-    bucket_name = 'solsmitten-bucket'
+    bucket_name = 'solsmitten-bucket-2'
     my_bucket = s3_resource.Bucket(bucket_name)
     s3_client = boto3.client('s3')
     params = {'Bucket': bucket_name, 'Key': itemName}
@@ -50,9 +50,8 @@ def getItem(itemName):
 
 # Upload a new file
 def uploadFileToS3(img, fileName):
-    bucket_name = 'solsmitten-bucket'
+    bucket_name = 'solsmitten-bucket-2'
     params = {'Bucket': bucket_name, 'Key': fileName}
-    bucket_name = 'solsmitten-bucket'
     s3_client = boto3.client('s3')
     s3_client.put_object(Key=fileName, Body=img, Bucket=bucket_name)
     url = s3_client.generate_presigned_url('get_object', params)
@@ -65,7 +64,7 @@ def uploadFileToS3FromStorage(location, fileName):
     bucket_name = 'solsmitten-bucket'
     params = {'Bucket': bucket_name, 'Key': fileName}
     s3_client = boto3.client('s3')
-    data = open(fileName, 'rb')
+    data = open(location, 'rb')
     s3_client.put_object(Key=fileName, Body=data, Bucket=bucket_name)
     url = s3_client.generate_presigned_url('get_object', params)
     return url
@@ -102,7 +101,7 @@ def download_file(file_name):
     """
     s3 = boto3.client('s3')
     output = f"downloads/{file_name}"
-    s3.download_file('solsmitten-bucket', file_name, "images/test.jpg")
+    s3.download_file('solsmitten-bucket-2', file_name, "images/test.jpg")
     return "test.jpg"
 
 
