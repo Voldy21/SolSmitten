@@ -26,7 +26,7 @@ ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 
 def listItemsInBucket():
-    bucket_name = 'solsmitten-bucket'
+    #bucket_name = 'solsmitten-bucket'
     my_bucket = s3_resource.Bucket(bucket_name)
     s3_client = boto3.client('s3')
 
@@ -40,8 +40,8 @@ def listItemsInBucket():
 
 
 def getItem(itemName):
-    bucket_name = 'solsmitten-bucket'
-    my_bucket = s3_resource.Bucket(bucket_name)
+    # bucket_name = 'solsmitten-bucket'
+    # my_bucket = s3_resource.Bucket(bucket_name)
     s3_client = boto3.client('s3')
     params = {'Bucket': bucket_name, 'Key': itemName}
     url = s3_client.generate_presigned_url('get_object', params)
@@ -50,14 +50,12 @@ def getItem(itemName):
 
 # Upload a new file
 def uploadFileToS3(img, fileName, folder_path):
-    bucket_name = 'solsmitten-bucket'
+    #bucket_name = 'solsmitten-bucket'
     s3 = boto3.resource('s3')
     params = {'Bucket': bucket_name, 'Key': fileName}
-    # for folder in s3_client.list_objects(Bucket=bucket_name):
-    #     if folder == folder_path:
     s3.Bucket(bucket_name).upload_file(img, '%s/%s' %(folder_path, img))
     url = s3_client.generate_presigned_url('get_object', params)
-    print("image in bucket")
+    #print("image in bucket")
 
     return url
 
@@ -65,7 +63,7 @@ def uploadFileToS3(img, fileName, folder_path):
 
 
 def uploadFileToS3FromStorage(location, fileName):
-    bucket_name = 'solsmitten-bucket'
+    #bucket_name = 'solsmitten-bucket'
     params = {'Bucket': bucket_name, 'Key': fileName}
     s3_client = boto3.client('s3')
     data = open(fileName, 'rb')
