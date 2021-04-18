@@ -47,6 +47,7 @@ def insert_details(args):
     cursor.close()
     return user_id
 
+
 def add_image_details(args):
     file_id = args['File Id']
     image_link = args['Image Link']
@@ -66,6 +67,7 @@ def add_image_details(args):
     conn.commit()
     cursor.close()
     return file_id
+
 
 def update_details(args):
     email = args['Email']
@@ -192,8 +194,7 @@ def delete_all_images():
 
 
 def getData(args):
-    user_id = int(args['user_id'])
-    print(user_id)
+    user_id = args['user_id']
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM images WHERE user_id=%s", [user_id])
     details = cursor.fetchall()
@@ -202,7 +203,7 @@ def getData(args):
 
 
 def getName(args):
-    user_id = int(args['user_id'])
+    user_id = args['user_id']
     cursor = conn.cursor()
     cursor.execute(
         "SELECT * FROM Users WHERE primary_key=%s", [user_id])

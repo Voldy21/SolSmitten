@@ -11,7 +11,7 @@ import werkzeug
 
 ACCESS_KEY_ID = ''
 ACCESS_SECRET_KEY = ''
-bucket_name = 'solsmitten-bucket-2'
+getBucketName()
 
 # s3 = boto3.client(
 #     's3',
@@ -24,8 +24,12 @@ my_bucket = s3_resource.Bucket(bucket_name)
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 
+def getBucketName():
+    return 'solsmitten-bucket-2'
+
+
 def listItemsInBucket():
-    bucket_name = 'solsmitten-bucket-2'
+    getBucketName()
     my_bucket = s3_resource.Bucket(bucket_name)
     s3_client = boto3.client('s3')
 
@@ -39,7 +43,7 @@ def listItemsInBucket():
 
 
 def getItem(itemName):
-    bucket_name = 'solsmitten-bucket-2'
+    getBucketName()
     my_bucket = s3_resource.Bucket(bucket_name)
     s3_client = boto3.client('s3')
     params = {'Bucket': bucket_name, 'Key': itemName}
@@ -48,7 +52,7 @@ def getItem(itemName):
 
 
 # # Upload a new file
-#     bucket_name = 'solsmitten-bucket'
+#     getBucketName()
 #     s3 = boto3.resource('s3')
 #     params = {'Bucket': bucket_name, 'Key': fileName}
 #     # for folder in s3_client.list_objects(Bucket=bucket_name):
@@ -61,7 +65,7 @@ def getItem(itemName):
 # Upload a new file from disk
 
 def uploadFileToS3FromStorage(location, fileName):
-    bucket_name = 'solsmitten-bucket'
+    getBucketName()
     params = {'Bucket': bucket_name, 'Key': fileName}
     s3_client = boto3.client('s3')
     data = open(location, 'rb')
