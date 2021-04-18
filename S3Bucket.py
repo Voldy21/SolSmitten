@@ -11,7 +11,7 @@ import werkzeug
 
 ACCESS_KEY_ID = ''
 ACCESS_SECRET_KEY = ''
-getBucketName()
+bucket_name = getBucketName()
 
 # s3 = boto3.client(
 #     's3',
@@ -51,14 +51,14 @@ def getItem(itemName):
     print(url)
 
 
-# # Upload a new file
-#     getBucketName()
-#     s3 = boto3.resource('s3')
-#     params = {'Bucket': bucket_name, 'Key': fileName}
-#     # for folder in s3_client.list_objects(Bucket=bucket_name):
-#     #     if folder == folder_path:
-#     url = s3_client.generate_presigned_url('get_object', params)
-#     print("image in bucket")
+# Upload a new file
+def uploadFileToS3(img, fileName, folder_path):
+    #bucket_name = 'solsmitten-bucket'
+    s3 = boto3.resource('s3')
+    params = {'Bucket': bucket_name, 'Key': fileName}
+    s3.Bucket(bucket_name).upload_file(img, '%s/%s' %(folder_path, img))
+    url = s3_client.generate_presigned_url('get_object', params)
+    #print("image in bucket")
 
 #     return url
 
