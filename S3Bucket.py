@@ -5,14 +5,13 @@ from botocore.exceptions import ClientError
 import ss_db as db
 
 from flask import Flask, jsonify, make_response, request
-import boto3
 import os
 import werkzeug
 #from flask_restful import Resource, reqparse, Api
 
 ACCESS_KEY_ID = ''
 ACCESS_SECRET_KEY = ''
-bucket_name = 'solsmitten-bucket'
+bucket_name = getBucketName()
 
 # s3 = boto3.client(
 #     's3',
@@ -25,8 +24,12 @@ my_bucket = s3_resource.Bucket(bucket_name)
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 
+def getBucketName():
+    return 'solsmitten-bucket-2'
+
+
 def listItemsInBucket():
-    #bucket_name = 'solsmitten-bucket'
+    getBucketName()
     my_bucket = s3_resource.Bucket(bucket_name)
     s3_client = boto3.client('s3')
 
@@ -40,8 +43,8 @@ def listItemsInBucket():
 
 
 def getItem(itemName):
-    # bucket_name = 'solsmitten-bucket'
-    # my_bucket = s3_resource.Bucket(bucket_name)
+    getBucketName()
+    my_bucket = s3_resource.Bucket(bucket_name)
     s3_client = boto3.client('s3')
     params = {'Bucket': bucket_name, 'Key': itemName}
     url = s3_client.generate_presigned_url('get_object', params)
@@ -57,16 +60,15 @@ def uploadFileToS3(img, fileName, folder_path):
     url = s3_client.generate_presigned_url('get_object', params)
     #print("image in bucket")
 
-    return url
+#     return url
 
 # Upload a new file from disk
 
-
 def uploadFileToS3FromStorage(location, fileName):
-    #bucket_name = 'solsmitten-bucket'
+    getBucketName()
     params = {'Bucket': bucket_name, 'Key': fileName}
     s3_client = boto3.client('s3')
-    data = open(fileName, 'rb')
+    data = open(location, 'rb')
     s3_client.put_object(Key=fileName, Body=data, Bucket=bucket_name)
     url = s3_client.generate_presigned_url('get_object', params)
     return url
@@ -103,7 +105,7 @@ def download_file(file_name):
     """
     s3 = boto3.client('s3')
     output = f"downloads/{file_name}"
-    s3.download_file('solsmitten-bucket', file_name, "images/test.jpg")
+    s3.download_file('solsmitten-bucket-2', file_name, "images/test.jpg")
     return "test.jpg"
 
 
@@ -118,11 +120,10 @@ def list_files(bucket):
 
     return contents
 
+
 def create_user_folder(user_name):
     folder_name = user_name + "_images"
-  
-    s3_client.put_object(Bucket=bucket_name, Key=(folder_name+'/'))
+
+    s3_client.put_object(Bucket=bucket_name, Key=(folder_name + '/'))
 
     return folder_name
-
-
