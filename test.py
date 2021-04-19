@@ -1,3 +1,3 @@
-a = None
+import os
 
-print(any((, , , , ,)))
+print(__file__)

@@ -6,15 +6,19 @@ from flask_restful import Api, Resource, reqparse
 from signup_endpoint import SignUp
 from login_endpoint import Login
 from delete_endpoint import Delete
-from home import Base
-from S3Bucket import list_files, download_file, upload_file, UploadImage, uploadFileToS3FromStorage
+from home import Base, BaseData
+from S3Bucket import list_files, download_file, upload_file, uploadFileToS3FromStorage
 from werkzeug.utils import secure_filename
-from S3Bucket import uploadFileToS3
-from wrinkleDetection import wrinkleDetection
+from wrinkleDetection import wrinkleDetection, fixImage
+from startModel import start_model
+from stopModel import stop_model
+from analyzeImage import show_custom_labels
 import datetime
+import uuid
+
 
 BUCKET = "elasticbeanstalk-us-east-1-671261739394"
-
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 application = Flask(__name__)
 UPLOAD_FOLDER = '/images'
@@ -25,8 +29,9 @@ CORS(application)
 api.add_resource(Login, "/login")
 api.add_resource(SignUp, "/signup")
 api.add_resource(Delete, "/delete/<string:name>")
-api.add_resource(UploadImage, "/upload")
+# api.add_resource(UploadImage, "/upload")
 api.add_resource(Base, "/home")
+api.add_resource(BaseData, "/home/<user_id>")
 
 
 @application.route("/")
@@ -47,45 +52,49 @@ def Images():
     return string
 
 
-# @application.route("/<username>")
-# def find(username):
-#     details = db.getUser_ID(username)
-#     return {"user_id": details['primary_key']}
-
-
 @application.route('/uploader', methods=['GET', 'POST'])
 def upload_file_route():
     if request.method == 'POST':
         if request.files:
-            "46-wd-4-10-21 1-20-21.jpg"
             # try:
-            timeStamp = str(datetime.datetime.now()).split('.')[
-                0].replace(":", "-")
+            unique_id = uuid.uuid4()
             f = request.files['file']
             urlSplit = f.filename.split(".")
             user_id = urlSplit[0]
-            fileName = f'{user_id}-{timeStamp}.{urlSplit[1]}'
-            # save original image to s3 bucket
-            originalURL = uploadFileToS3(f, fileName)
+            fileName = f'{user_id}-{unique_id}.{urlSplit[1]}'
+            # Save file on disc
+            imgPath = os.path.join(
+                os.path.dirname((__file__)), "images", fileName)
+            f.save(imgPath)
+
+            originalURL = fixImage(imgPath, fileName)
             # split name wrinkleDetection filename
-            wrinkleDetectionName = f'{user_id}-wd-{timeStamp}.{urlSplit[1]}'
-            # send image through wrinkle detection
+            wrinkleDetectionName = f'{user_id}-wd-{unique_id}.{urlSplit[1]}'
+            acneDetectionName = f'{user_id}-ad-{unique_id}.{urlSplit[1]}'
+
+            # # send image through wrinkle detection
             wrinkleScore = wrinkleDetection(
                 originalURL, wrinkleDetectionName)
-            if wrinkleScore == 0:
-                return "failure"
-            print(wrinkleScore)
-
             # upload processed image to s3 bucket
             wrinkleURL = uploadFileToS3FromStorage(os.path.join(
                 os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
+            # Acne detection
+            # show_custom_labels(fileName, acneDetectionName)
+
             db.insert_image_details(
                 wrinkleURL, originalURL, wrinkleScore, user_id)
-            return "success"
+            if os.path.exists(wrinkleDetectionName):
+                os.remove(wrinkleDetectionName)
+            return {
+                "wrinkleURL": wrinkleURL,
+                "originalURL": originalURL,
+                "WrinkleScore": wrinkleScore,
+                "user_id": user_id
+            }
             # except:
             #     return "failed"
             # return str(x)
-        return "failed"
+        return {"message", "failure"}
 
 
 if __name__ == "__main__":
