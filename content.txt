@@ -1,0 +1,29 @@
+application.py - The center of the project. Every route and everything    involving the project has to go through there
+
+acneDetection.py -
+
+analyzeImage.py -
+
+delete_endpoint.py - Contains certain endpoints to delete user data or Images
+
+functions.py - Is not currently in use by any of the routes. Contains starter functions to use tokens for persistent storage. The current solution involves simply storing a user_id in asyncStorage through the front end and using that to know the identity of the user
+
+home.py - Contains route to retrieve basic data from the user such as user information and images pertaining to that specific user
+
+login_endpoint.py - Contains endpoints for logging in a particular user
+
+requirements.txt - Contains all the pacakge names and version numbers needed to run this application. The command to install all the packages is "pip install -r requirements.txt"
+
+S3Bucket.py - Contains useful functions for uploading to the S3 bucket and downloading from the S3 bucket. The main functions being used are "uploadFilToS3FromStorage()" and "download_file()". The others are for debugging purposes.
+
+signup_endpoint.py - Contains endpoints for registering a user and updating the user information
+
+ss_db.py - For manipulating the database. Contains the location for where the database credentials need to be entered along with all the functions used by the endpoints to Insert, Select, Delete, or Update values in the database.
+
+start_model.py -
+
+stop_model.py -
+
+test.py - For debugging purposes
+
+WrinkleDetection.py - Hosts the wrinkle detection code along with "fixImage()" which is called under "/uploader" endpoint in application.py. "fixImage()" rotates the image if the picture is sent to the server sideways

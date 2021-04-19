@@ -65,7 +65,7 @@ def display_image(bucket, photo, response, acneFileName):
 
 def show_custom_labels(photo, acneFileName):
 
-    bucket = 'solsmitten-bucket-2'
+    bucket = 'solsmitten-bucket'
     model = 'arn:aws:rekognition:us-east-1:697756607889:project/acneDetection/version/acneDetection.2021-04-15T17.00.32/1618520432917'
     min_confidence = 50
 

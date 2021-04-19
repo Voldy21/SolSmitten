@@ -62,13 +62,14 @@ def upload_file_route():
             urlSplit = f.filename.split(".")
             user_id = urlSplit[0]
             fileName = f'{user_id}-{unique_id}.{urlSplit[1]}'
-            # Save file on disc
+            # Path to image on disc
             imgPath = os.path.join(
                 os.path.dirname((__file__)), "images", fileName)
+            # Save image to disc
             f.save(imgPath)
-
+            # Rotate and resize image along with uploading image to S3 bucket and get URL back
             originalURL = fixImage(imgPath, fileName)
-            # split name wrinkleDetection filename
+            # Assign file names for wrinkle detection and acne detection images
             wrinkleDetectionName = f'{user_id}-wd-{unique_id}.{urlSplit[1]}'
             acneDetectionName = f'{user_id}-ad-{unique_id}.{urlSplit[1]}'
 
@@ -79,10 +80,11 @@ def upload_file_route():
             wrinkleURL = uploadFileToS3FromStorage(os.path.join(
                 os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
             # Acne detection
-            # show_custom_labels(fileName, acneDetectionName)
-
+            show_custom_labels(fileName, acneDetectionName)
+            # Insert Data to database
             db.insert_image_details(
                 wrinkleURL, originalURL, wrinkleScore, user_id)
+            # Remove images that are currently in image folder
             if os.path.exists(wrinkleDetectionName):
                 os.remove(wrinkleDetectionName)
             return {

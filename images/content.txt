@@ -1,0 +1,12 @@
+This folder is to temporarily hold the images of the user. Processing user images go through a series of steps:
+
+1) Recieving the image
+2) Saving the image in this folder
+3) Sending the image to S3
+4) Processing the images
+5) Saving the processed images to this folder
+6) Sending the processed images to S3
+7) Updating the database
+8) Deleting the images in this folder
+
+This folder is just a temporary holder of the images
