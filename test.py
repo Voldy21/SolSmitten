@@ -1,1 +1,3 @@
-a = None
+import os
+
+print(__file__)
