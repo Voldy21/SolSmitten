@@ -39,12 +39,7 @@ def main():
     min_inference_units=1 
     version_name='acneDetection.2021-04-18T09.41.55'
 
-=======
-    project_arn = 'arn:aws:rekognition:us-east-1:697756607889:project/acneDetection/1618518427566'
-    model_arn = 'arn:aws:rekognition:us-east-1:697756607889:project/acneDetection/version/acneDetection.2021-04-15T17.00.32/1618520432917'
-    min_inference_units = 1
-    version_name = 'acneDetection.2021-04-15T17.00.32'
->>>>>>> a36971f258b39dca1bf03819394430ed64267d92
+
     start_model(project_arn, model_arn, version_name, min_inference_units)
 
 
