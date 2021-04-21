@@ -94,7 +94,7 @@ def update_details(args):
     return user_id
 
 
-def insert_image_details(wrinkleUrl, originalUrl, wrinkleScore, userID, ):
+def insert_image_details(wrinkleUrl, originalUrl, wrinkleScore, userID):
     # try:
     cursor = conn.cursor()
     cursor.execute("INSERT INTO images (user_id, wrinkle_link, original_link, wrinkle_score) VALUES (%s, %s, %s, %s)",

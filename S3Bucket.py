@@ -9,9 +9,14 @@ import os
 import werkzeug
 #from flask_restful import Resource, reqparse, Api
 
+
+def getBucketName():
+    return 'solsmitten'
+
+
 ACCESS_KEY_ID = ''
 ACCESS_SECRET_KEY = ''
-getBucketName()
+bucket_name = getBucketName()
 
 # s3 = boto3.client(
 #     's3',
@@ -24,12 +29,8 @@ my_bucket = s3_resource.Bucket(bucket_name)
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 
-def getBucketName():
-    return 'solsmitten-bucket-2'
-
-
 def listItemsInBucket():
-    getBucketName()
+    bucket_name = getBucketName()
     my_bucket = s3_resource.Bucket(bucket_name)
     s3_client = boto3.client('s3')
 
@@ -43,7 +44,7 @@ def listItemsInBucket():
 
 
 def getItem(itemName):
-    getBucketName()
+    bucket_name = getBucketName()
     my_bucket = s3_resource.Bucket(bucket_name)
     s3_client = boto3.client('s3')
     params = {'Bucket': bucket_name, 'Key': itemName}
@@ -52,7 +53,7 @@ def getItem(itemName):
 
 
 # # Upload a new file
-#     getBucketName()
+#     bucket_name = getBucketName()
 #     s3 = boto3.resource('s3')
 #     params = {'Bucket': bucket_name, 'Key': fileName}
 #     # for folder in s3_client.list_objects(Bucket=bucket_name):
@@ -65,7 +66,7 @@ def getItem(itemName):
 # Upload a new file from disk
 
 def uploadFileToS3FromStorage(location, fileName):
-    getBucketName()
+    bucket_name = getBucketName()
     params = {'Bucket': bucket_name, 'Key': fileName}
     s3_client = boto3.client('s3')
     data = open(location, 'rb')
@@ -105,7 +106,7 @@ def download_file(file_name):
     """
     s3 = boto3.client('s3')
     output = f"downloads/{file_name}"
-    s3.download_file('solsmitten-bucket-2', file_name, "images/test.jpg")
+    s3.download_file('solsmitten', file_name, "images/test.jpg")
     return "test.jpg"
 
 
