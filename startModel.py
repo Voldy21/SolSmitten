@@ -33,10 +33,11 @@ def start_model(project_arn, model_arn, version_name, min_inference_units):
 
 
 def main():
-    project_arn = 'arn:aws:rekognition:us-east-1:697756607889:project/acneDetection/1618518427566'
-    model_arn = 'arn:aws:rekognition:us-east-1:697756607889:project/acneDetection/version/acneDetection.2021-04-15T17.00.32/1618520432917'
+    project_arn = 'arn:aws:rekognition:us-east-1:671261739394:project/acneDetection/1618752126590'
+    model_arn = 'arn:aws:rekognition:us-east-1:671261739394:project/acneDetection/version/acneDetection.2021-04-18T09.41.55/1618753315574'
     min_inference_units = 1
-    version_name = 'acneDetection.2021-04-15T17.00.32'
+    version_name = 'acneDetection.2021-04-18T09.41.55'
+
     start_model(project_arn, model_arn, version_name, min_inference_units)
 
 

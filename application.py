@@ -80,7 +80,7 @@ def upload_file_route():
             wrinkleURL = uploadFileToS3FromStorage(os.path.join(
                 os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
             # Acne detection
-            show_custom_labels(fileName, acneDetectionName)
+            # acneURL = show_custom_labels(fileName, acneDetectionName)
             # Insert Data to database
             db.insert_image_details(
                 wrinkleURL, originalURL, wrinkleScore, user_id)

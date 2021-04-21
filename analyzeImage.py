@@ -4,12 +4,13 @@ import boto3
 import io
 from PIL import Image, ImageDraw, ExifTags, ImageColor, ImageFont
 from S3Bucket import uploadFileToS3FromStorage
-from startModel import start_model
 from stopModel import stop_model
+from startModel import start_model
 import os
 
 
 def display_image(bucket, photo, response, acneFileName):
+
     # Load image from S3 bucket
     s3_connection = boto3.resource('s3')
 
@@ -36,7 +37,8 @@ def display_image(bucket, photo, response, acneFileName):
             width = imgWidth * box['Width']
             height = imgHeight * box['Height']
 
-            fnt = ImageFont.truetype('/Library/Fonts/Arial.ttf', 50)
+            fnt = ImageFont.truetype(os.path.join(
+                os.path.dirname((__file__)), "Resources", "arial.ttf"), 50)
             draw.text(
                 (left, top), customLabel['Name'], fill='#00d400', font=fnt)
 
@@ -55,25 +57,22 @@ def display_image(bucket, photo, response, acneFileName):
     print(image)
     image.save(os.path.join(
         os.path.dirname((__file__)), "images", "Tom.jpg"))
-    params = {'Bucket': bucket, 'Key': acneFileName}
-    s3_client = boto3.client('s3')
-    s3_client.put_object(Key=acneFileName, Body=image, Bucket=bucket)
-    url = s3_client.generate_presigned_url('get_object', params)
-
-    image.show()
+    url = uploadFileToS3FromStorage(os.path.join(
+        os.path.dirname((__file__)), "images", "Tom.jpg"), acneFileName)
+    return url
 
 
 def show_custom_labels(photo, acneFileName):
 
     bucket = 'solsmitten-bucket'
-    model = 'arn:aws:rekognition:us-east-1:697756607889:project/acneDetection/version/acneDetection.2021-04-15T17.00.32/1618520432917'
-    min_confidence = 50
+    model = 'arn:aws:rekognition:us-east-1:671261739394:project/acneDetection/version/acneDetection.2021-04-18T09.41.55/1618753315574'
+    min_confidence = 25
 
     # Start Model parameters required
-    project_arn = 'arn:aws:rekognition:us-east-1:697756607889:project/acneDetection/1618518427566'
-    model_arn = 'arn:aws:rekognition:us-east-1:697756607889:project/acneDetection/version/acneDetection.2021-04-15T17.00.32/1618520432917'
+    project_arn = 'arn:aws:rekognition:us-east-1:671261739394:project/acneDetection/1618752126590'
+    model_arn = 'arn:aws:rekognition:us-east-1:671261739394:project/acneDetection/version/acneDetection.2021-04-18T09.41.55/1618753315574'
     min_inference_units = 1
-    version_name = 'acneDetection.2021-04-15T17.00.32'
+    version_name = 'acneDetection.2021-04-18T09.41.55'
 
     start_model(project_arn, model_arn, version_name, min_inference_units)
 
@@ -89,13 +88,3 @@ def show_custom_labels(photo, acneFileName):
 
     stop_model(model_arn)
     return len(response['CustomLabels'])
-
-
-def main():
-
-    label_count = show_custom_labels(model, bucket, photo, min_confidence)
-    print("Custom labels detected: " + str(label_count))
-
-
-if __name__ == "__main__":
-    main()
