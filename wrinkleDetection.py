@@ -2,7 +2,7 @@ import numpy as np
 from urllib.request import urlopen
 import os
 from S3Bucket import uploadFileToS3FromStorage
-import cv2
+from cv2 import cv2
 
 
 def fixImage(imgLocation, fileName):
@@ -75,7 +75,6 @@ def wrinkleDetection(imgLocation, fileName):
     if len(gray_img) != 0:
         faces = face_cascade.detectMultiScale(
             gray_img, scaleFactor=1.1, minNeighbors=10)
-        i = 0
     else:
         return "failure"
 
@@ -83,7 +82,6 @@ def wrinkleDetection(imgLocation, fileName):
         # Crop the original image
         cropped_img = img[y:y + h, x:x + w]
         # Get the grayscaled version of the cropped image
-        gray = cv2.cvtColor(cropped_img, cv2.COLOR_BGR2GRAY)
         # detect eyes
         lefteye = lefteye_cascade.detectMultiScale(
             cropped_img, scaleFactor=1.1, minNeighbors=10)
