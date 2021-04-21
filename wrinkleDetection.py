@@ -1,8 +1,8 @@
-import cv2
 import numpy as np
 from urllib.request import urlopen
 import os
 from S3Bucket import uploadFileToS3FromStorage
+import cv2
 
 
 def fixImage(imgLocation, fileName):
