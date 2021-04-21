@@ -94,11 +94,11 @@ def update_details(args):
     return user_id
 
 
-def insert_image_details(wrinkleUrl, originalUrl, wrinkleScore, userID, acneURL):
+def insert_image_details(wrinkleUrl, originalUrl, wrinkleScore, userID):
     # try:
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO images (user_id, wrinkle_link, original_link, wrinkle_score, acne_link) VALUES (%s, %s, %s, %s, %s)",
-                   (userID, wrinkleUrl, originalUrl, wrinkleScore, acneURL))
+    cursor.execute("INSERT INTO images (user_id, wrinkle_link, original_link, wrinkle_score) VALUES (%s, %s, %s, %s)",
+                   (userID, wrinkleUrl, originalUrl, wrinkleScore))
     conn.commit()
     cursor.close()
     return "succcess"

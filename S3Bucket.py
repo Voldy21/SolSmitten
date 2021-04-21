@@ -11,7 +11,7 @@ import werkzeug
 
 
 def getBucketName():
-    return 'solsmitten-bucket'
+    return 'solsmitten'
 
 
 ACCESS_KEY_ID = ''
@@ -106,7 +106,7 @@ def download_file(file_name):
     """
     s3 = boto3.client('s3')
     output = f"downloads/{file_name}"
-    s3.download_file('solsmitten-bucket-2', file_name, "images/test.jpg")
+    s3.download_file('solsmitten', file_name, "images/test.jpg")
     return "test.jpg"
 
 
