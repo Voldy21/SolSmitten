@@ -7,6 +7,7 @@ import ss_db as db
 from flask import Flask, jsonify, make_response, request
 import os
 import werkzeug
+from config import S3_KEY, S3_SECRET, AWS_SESSION_TOKEN
 #from flask_restful import Resource, reqparse, Api
 
 
@@ -14,15 +15,15 @@ def getBucketName():
     return 'solsmitten'
 
 
-ACCESS_KEY_ID = ''
-ACCESS_SECRET_KEY = ''
 bucket_name = getBucketName()
 
-# s3 = boto3.client(
-#     's3',
-#     aws_access_key_id=ACCESS_KEY_ID,
-#     aws_secret_access_key=ACCESS_SECRET_KEY)
-s3_client = boto3.client('s3')
+
+s3 = boto3.client(
+    "s3"
+    # aws_access_key_id=S3_KEY,
+    # aws_secret_access_key=S3_SECRET,
+    # aws_session_token=AWS_SESSION_TOKEN
+)
 s3_resource = boto3.resource('s3')
 my_bucket = s3_resource.Bucket(bucket_name)
 
@@ -34,14 +35,6 @@ def listItemsInBucket():
     my_bucket = s3_resource.Bucket(bucket_name)
     s3_client = boto3.client('s3')
 
-    # for bucket in s3_resource.buckets.all():
-    #     print(bucket.name)
-
-    # for file in my_bucket.objects.all():
-    #     params = {'Bucket': bucket_name, 'Key': file.key}
-    #     url = s3_client.generate_presigned_url('get_object', params)
-    #     print(url)
-
 
 def getItem(itemName):
     bucket_name = getBucketName()
@@ -52,18 +45,30 @@ def getItem(itemName):
     print(url)
 
 
-# # Upload a new file
-#     bucket_name = getBucketName()
-#     s3 = boto3.resource('s3')
-#     params = {'Bucket': bucket_name, 'Key': fileName}
-#     # for folder in s3_client.list_objects(Bucket=bucket_name):
-#     #     if folder == folder_path:
-#     url = s3_client.generate_presigned_url('get_object', params)
-#     print("image in bucket")
+def upload_file_to_s3(imagePath, filename):
+    bucket_name = "solsmitten"
+    file = open(imagePath, 'rb')
+    try:
+        s3.upload_fileobj(
+            file,
+            bucket_name,
+            filename,
+        )
+        params = {'Bucket': bucket_name, 'Key': filename}
+        url = s3.generate_presigned_url('get_object', params)
+        if os.path.exists(imagePath):
+            os.remove(imagePath)
+        return url
 
-#     return url
+    except Exception as e:
+        # This is a catch all exception, edit this part to fit your needs.
+        return {"message": "failure",
+                "error": str(e),
+                "aws_access_key_id": S3_KEY,
+                "aws_secret_access_key": S3_SECRET,
+                "aws_session_token": AWS_SESSION_TOKEN
+                }
 
-# Upload a new file from disk
 
 def uploadFileToS3FromStorage(location, fileName):
     bucket_name = getBucketName()
@@ -72,21 +77,8 @@ def uploadFileToS3FromStorage(location, fileName):
     data = open(location, 'rb')
     s3_client.put_object(Key=fileName, Body=data, Bucket=bucket_name)
     url = s3_client.generate_presigned_url('get_object', params)
+    print(url)
     return url
-
-
-# class UploadImage(Resource):
-#     def post(self):
-#         parse = reqparse.RequestParser()
-#         parse.add_argument(
-#             'file', type=werkzeug.datastructures.FileStorage, location='/images')
-#         parse.add_argument('user_id', type=int)
-#         args = parse.parse_args()
-#         print(args)
-#         image_file = args['file']
-#         if image_file:
-#             image_file.save("your_file_name.jpg")
-#         return "hello"
 
 
 def upload_file(file_name, bucket):

@@ -1,11 +1,13 @@
 import numpy as np
 from urllib.request import urlopen
 import os
-from S3Bucket import uploadFileToS3FromStorage
-from cv2 import cv2
+from S3Bucket import upload_file_to_s3
+import cv2
+import boto3
+from PIL import Image
 
 
-def fixImage(imgLocation, fileName):
+def fixImage(img, fileName):
     def resize(img, scale_percent):
         width = int(img.shape[1] * scale_percent / 100)
         height = int(img.shape[0] * scale_percent / 100)
@@ -13,8 +15,10 @@ def fixImage(imgLocation, fileName):
         resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
         return resized
 
+    pil_image = Image.open(img).convert('RGB')
+    open_cv_image = np.array(pil_image)
+    img = open_cv_image[:, :, ::-1].copy()
     # Read the image
-    img = cv2.imread(imgLocation)
     i = 0
     while(np.logical_and(img is None, i < 4)):
         img = cv2.imread(os.path.join("images", imgLocation))
@@ -46,12 +50,9 @@ def fixImage(imgLocation, fileName):
         imagePath = os.path.join(os.path.dirname(
             __file__), "images", fileName)
         cv2.imwrite(imagePath, img)
-        imgURL = uploadFileToS3FromStorage(imagePath, fileName)
-        if os.path.exists(imagePath):
-            os.remove(imagePath)
+        imgURL = upload_file_to_s3(imagePath, fileName)
         return imgURL
     else:
-        print("no image")
         return "failure"
 
 

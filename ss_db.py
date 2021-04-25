@@ -10,19 +10,6 @@ conn = pymysql.connect(
 
 )
 
-# # Table Creation
-# cursor = conn.cursor()
-# create_table = """
-# create table User_Profile (user_email VARCHAR(30) PRIMARY KEY,
-# user_id INT,
-# user_name VARCHAR(30),
-# user_password VARCHAR(30),
-# user_score INT )
-
-# """
-# cursor.execute(create_table)
-# hello
-
 
 def insert_details(args):
     email = args['Email']
@@ -97,13 +84,26 @@ def update_details(args):
 def insert_image_details(wrinkleUrl, originalUrl, wrinkleScore, userID):
     # try:
     cursor = conn.cursor()
-    cursor.execute("INSERT INTO images (user_id, wrinkle_link, original_link, wrinkle_score) VALUES (%s, %s, %s, %s)",
+    cursor.execute("INSERT INTO images (user_id, wrinkle_link, original_link, wrinkle_score ) VALUES (%s, %s, %s, %s)",
                    (userID, wrinkleUrl, originalUrl, wrinkleScore))
+
+    conn.commit()
+    cursor.execute(
+        "SELECT file_id FROM images WHERE original_link=%s", (originalUrl))
+    details = cursor.fetchone()
     conn.commit()
     cursor.close()
-    return "succcess"
+    return details['file_id']
     # except:
     #     return "failure"
+
+
+def update_image_details_acne(fileID, acneURL, acneScore):
+    cursor = conn.cursor()
+    cursor.execute("UPDATE images SET acne_link=%s, acne_score=%s WHERE file_id=%s",
+                   (acneURL, acneScore, fileID))
+    conn.commit()
+    cursor.close()
 
 
 def delete_user_profile(name):
@@ -189,8 +189,8 @@ def delete_all_images():
         cursor.execute("DELETE FROM images")
         cursor.close()
         return "Success"
-    except:
-        return "Failure"
+    except Exception as e:
+        return str(e)
 
 
 def getData(args):
