@@ -1,7 +1,7 @@
 # flask_s3_uploads/config.py
 
 import os
-S3_BUCKET = "solsmitten"
+S3_BUCKET = "solsmitten2"
 S3_KEY = os.environ.get("S3_ACCESS_KEY")
 S3_SECRET = os.environ.get("S3_SECRET_ACCESS_KEY")
 AWS_SESSION_TOKEN = os.environ.get("SESSION_TOKEN")

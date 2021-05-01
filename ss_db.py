@@ -1,7 +1,7 @@
 import pymysql
 
 conn = pymysql.connect(
-    host='solsmitten.cxlp2fnydlpe.us-east-1.rds.amazonaws.com',
+    host='solsmitten.cblj8nprhubx.us-east-2.rds.amazonaws.com',
     port=3306,
     user='admin',
     password='jdtgr9704',
@@ -82,20 +82,20 @@ def update_details(args):
 
 
 def insert_image_details(wrinkleUrl, originalUrl, wrinkleScore, userID):
-    # try:
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO images (user_id, wrinkle_link, original_link, wrinkle_score ) VALUES (%s, %s, %s, %s)",
-                   (userID, wrinkleUrl, originalUrl, wrinkleScore))
+    try:
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO images (user_id, wrinkle_link, original_link, wrinkle_score ) VALUES (%s, %s, %s, %s)",
+                    (userID, wrinkleUrl, originalUrl, wrinkleScore))
 
-    conn.commit()
-    cursor.execute(
-        "SELECT file_id FROM images WHERE original_link=%s", (originalUrl))
-    details = cursor.fetchone()
-    conn.commit()
-    cursor.close()
-    return details['file_id']
-    # except:
-    #     return "failure"
+        conn.commit()
+    # cursor.execute(
+    #     "SELECT file_id FROM images WHERE original_link=%s", (originalUrl))
+    # details = cursor.fetchone()
+    # conn.commit()
+        cursor.close()
+        return "success"
+    except Exception as e:
+        return e
 
 
 def update_image_details_acne(fileID, acneURL, acneScore):

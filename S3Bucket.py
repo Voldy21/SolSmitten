@@ -12,17 +12,18 @@ from config import S3_KEY, S3_SECRET, AWS_SESSION_TOKEN
 
 
 def getBucketName():
-    return 'solsmitten'
+    return 'solsmitten2'
 
 
 bucket_name = getBucketName()
 
 
 s3 = boto3.client(
-    "s3"
-    # aws_access_key_id=S3_KEY,
-    # aws_secret_access_key=S3_SECRET,
-    # aws_session_token=AWS_SESSION_TOKEN
+    "s3",
+    aws_access_key_id=S3_KEY,
+    aws_secret_access_key=S3_SECRET,
+    region_name="us-east-2"
+
 )
 s3_resource = boto3.resource('s3')
 my_bucket = s3_resource.Bucket(bucket_name)
@@ -46,7 +47,7 @@ def getItem(itemName):
 
 
 def upload_file_to_s3(imagePath, filename):
-    bucket_name = "solsmitten"
+    bucket_name = "solsmitten2"
     file = open(imagePath, 'rb')
     try:
         s3.upload_fileobj(
@@ -55,7 +56,7 @@ def upload_file_to_s3(imagePath, filename):
             filename,
         )
         params = {'Bucket': bucket_name, 'Key': filename}
-        url = s3.generate_presigned_url('get_object', params)
+        url = s3.generate_presigned_url('get_object', params, ExpiresIn=604800 )
         if os.path.exists(imagePath):
             os.remove(imagePath)
         return url

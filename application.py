@@ -80,12 +80,10 @@ def upload_file_route():
             originalURL = fixImage(f, fileName)
             if isinstance(originalURL, dict):
                 return originalURL
-            if originalURL is -1:
-                return str(originalURL)
+
             # Assign file names for wrinkle detection and acne detection images
             wrinkleDetectionName = f'{user_id}-wd-{unique_id}.{urlSplit[1]}'
-            acneDetectionName = f'{user_id}-ad-{unique_id}.{urlSplit[1]}'
-
+            # acneDetectionName = f'{user_id}-ad-{unique_id}.{urlSplit[1]}'
             # # send image through wrinkle detection
             wrinkleScore = wrinkleDetection(
                 originalURL, wrinkleDetectionName)
@@ -100,11 +98,13 @@ def upload_file_route():
                 return str(wrinkleURL)
 
             # Insert Data to database
-            fileID = db.insert_image_details(
+            x = db.insert_image_details(
                 wrinkleURL, originalURL, wrinkleScore, user_id)
-
+            
+            if x != "success":
+                return x
             # Acne detection
-            show_custom_labels(fileName, acneDetectionName, fileID)
+            # show_custom_labels(fileName, acneDetectionName, fileID)
             return {
                 "wrinkleURL": wrinkleURL,
                 "originalURL": originalURL,
