@@ -35,34 +35,38 @@ api.add_resource(Base, "/home")
 api.add_resource(BaseData, "/home/<user_id>")
 
 
-@application.route("/")
-def hello():
-    details = db.get_details()
-    string = {
-        "info": details
-    }
-    return string
+# @application.route("/")
+# def hello():
+#     # details = db.get_details()
+#     # string = {
+#     #     "info": details
+#     # }
+#     # return string
+#     return "homepage"
 
 
-@application.route("/images")
-def Images():
-    details = db.get_Image_details()
-    string = {
-        "info": details
-    }
-    return string
+# @application.route("/images")
+# def Images():
+#     # details = db.get_Image_details()
+#     # string = {
+#     #     "info": details
+#     # }
+#     # return string
+#     pass
 
 
-@application.route('/uploaders', methods=['GET', 'POST'])
-def test_routing():
-    if request.method == 'POST':
-        if request.files:
-            f = request.files["file"]
-            x = upload_file_to_s3(f, f.filename)
-            print(f.filename)
-            return x
+# @application.route('/uploaders', methods=['GET', 'POST'])
+# def test_routing():
+#     if request.method == 'POST':
+#         if request.files:
+#             f = request.files["file"]
+#             x = upload_file_to_s3(f, f.filename)
+#             print(f.filename)
+#             return x
 
 
+
+# main uploading path
 @application.route('/uploader', methods=['GET', 'POST'])
 def upload_file_route():
     if request.method == 'POST':

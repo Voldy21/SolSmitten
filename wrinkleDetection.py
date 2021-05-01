@@ -14,11 +14,12 @@ def fixImage(img, fileName):
         dim = (width, height)
         resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
         return resized
-
+        
+    # Read the image
     pil_image = Image.open(img).convert('RGB')
     open_cv_image = np.array(pil_image)
     img = open_cv_image[:, :, ::-1].copy()
-    # Read the image
+    
     i = 0
     while(np.logical_and(img is None, i < 4)):
         img = cv2.imread(os.path.join("images", imgLocation))
@@ -46,10 +47,13 @@ def fixImage(img, fileName):
             faces = face_cascade.detectMultiScale(
                 gray_img, scaleFactor=1.1, minNeighbors=10)
             i += 1
-
+            
+        # Path to the image
         imagePath = os.path.join(os.path.dirname(
             __file__), "images", fileName)
+        # Save the file in that path
         cv2.imwrite(imagePath, img)
+        # Send the image to the upload_file function so it can be put in the bucket
         imgURL = upload_file_to_s3(imagePath, fileName)
         return imgURL
     else:
