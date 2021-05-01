@@ -65,9 +65,6 @@ def upload_file_to_s3(imagePath, filename):
         # This is a catch all exception, edit this part to fit your needs.
         return {"message": "failure",
                 "error": str(e),
-                "aws_access_key_id": S3_KEY,
-                "aws_secret_access_key": S3_SECRET,
-                "aws_session_token": AWS_SESSION_TOKEN
                 }
 
 
