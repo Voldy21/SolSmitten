@@ -34,6 +34,10 @@ api.add_resource(Delete, "/delete/<string:name>")
 api.add_resource(Base, "/home")
 api.add_resource(BaseData, "/home/<user_id>")
 
+@application.route('/')
+def root():
+    return ""
+
 # main uploading path
 @application.route('/uploader', methods=['GET', 'POST'])
 def upload_file_route():

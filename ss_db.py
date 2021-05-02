@@ -1,14 +1,16 @@
 import pymysql
 
-conn = pymysql.connect(
+
+def connectToDatabase():
+    conn = pymysql.connect(
     host='solsmitten.cblj8nprhubx.us-east-2.rds.amazonaws.com',
     port=3306,
     user='admin',
     password='jdtgr9704',
     db='Solsmitten',
     cursorclass=pymysql.cursors.DictCursor
-
-)
+    )
+    return conn
 
 
 def insert_details(args):
@@ -24,6 +26,7 @@ def insert_details(args):
         age = args['Age']
         stress = args['Stress']
         username = args['Username']
+        conn = connectToDatabase()
         cursor = conn.cursor()
         # See if user currently exists
         cursor.execute(
@@ -61,6 +64,7 @@ def update_details(args):
         username = args['Username']
         user_id = args['user_id']
         exists = check_if_user_exists(user_id)
+        conn = connectToDatabase()
         cursor = conn.cursor()
         if exists:
             cursor.execute("UPDATE Users SET FirstName = %s, LastName = %s, email = %s, skinFeel =%s, password =%s, sensitivity = %s, goals =%s, age =%s, stress =%s, skinType =%s, username =%s) WHERE primary_key = %s)",
@@ -79,6 +83,7 @@ def insert_image_details(wrinkleUrl, originalUrl, wrinkleScore, userID):
     try:
         exists = check_if_user_exists(userID)
         print(exists)
+        conn = connectToDatabase()
         cursor = conn.cursor()
         if exists: 
             cursor.execute("INSERT INTO images (user_id, wrinkle_link, original_link, wrinkle_score ) VALUES (%s, %s, %s, %s)",
@@ -94,6 +99,7 @@ def insert_image_details(wrinkleUrl, originalUrl, wrinkleScore, userID):
 
 def check_if_user_exists(user_id):
     try:
+        conn = connectToDatabase()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM Users WHERE primary_key=%s", (user_id))
         user_id = cursor.fetchone()
@@ -105,17 +111,22 @@ def check_if_user_exists(user_id):
         cursor.close()    
 
 def update_image_details_acne(fileID, acneURL, acneScore):
-    cursor = conn.cursor()
-    cursor.execute("UPDATE images SET acne_link=%s, acne_score=%s WHERE file_id=%s",
-                   (acneURL, acneScore, fileID))
-    conn.commit()
-    cursor.close()
+    try:
+        conn = connectToDatabase()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE images SET acne_link=%s, acne_score=%s WHERE file_id=%s",
+                    (acneURL, acneScore, fileID))
+        conn.commit()
+    finally:
+        cursor.close()
 
 
 def delete_user_profile(name):
     try:
+        conn = connectToDatabase()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM Users WHERE lastName=%s", [name])
+        conn.commit()
         return "Success"
     except:
         return "Failure"
@@ -142,27 +153,34 @@ def delete_user_profile(name):
 
 
 def get_user_Image_details(user_id):
-    cursor = conn.cursor()
-    cursor.execute("SELECT *  FROM images WHERE user_id=%s", [user_id])
-    details = cursor.fetchall()
-    cursor.close()
-    return details
+    try:
+        conn = connectToDatabase()
+        cursor = conn.cursor()
+        cursor.execute("SELECT *  FROM images WHERE user_id=%s", [user_id])
+        details = cursor.fetchall()
+        conn.commit()
+        return details
+    finally: 
+        cursor.close()
 
 
-def insertImageDetails():
-    cursor = conn.cursor()
-    cursor.execute("SELECT *  FROM Users")
-    details = cursor.fetchall()
-    cursor.close()
-    return details
+# def insertImageDetails():
+#     cursor = conn.cursor()
+#     cursor.execute("SELECT *  FROM Users")
+#     cu
+#     details = cursor.fetchall()
+#     cursor.close()
+#     return details
 
 
 def getUser_ID(username):
     try:
+        conn = connectToDatabase()
         cursor = conn.cursor()
         cursor.execute(
             "SELECT primary_key FROM Users WHERE username=%s", (username))
         details = cursor.fetchone()
+        conn.commit()
         cursor.close()
         return details
     except:
@@ -173,6 +191,7 @@ def login(args):
     try:
         username = args.username
         password = args.password
+        conn = connectToDatabase()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         cursor.execute(
             "SELECT * FROM Users WHERE username=%s AND password=%s", [username, password])
@@ -187,38 +206,55 @@ def login(args):
 
 def delete_all():
     try:
+        conn = connectToDatabase()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM Users WHERE firstName=%s", ["b%"])
-        cursor.close()
+        conn.commit()
         return "Success"
     except:
         return "Failure"
-
+    finally:
+        cursor.close()
 
 def delete_all_images():
     try:
+        conn = connectToDatabase()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM images")
+        conn.commit()
         cursor.close()
         return "Success"
     except Exception as e:
         return str(e)
 
 
-# def getData(args):
-#     user_id = args['user_id']
-#     cursor = conn.cursor()
-#     cursor.execute("SELECT * FROM images WHERE user_id=%s", [user_id])
-#     details = cursor.fetchall()
-#     cursor.close()
-#     return details
+def getData(args):
+    try:
+        user_id = args['user_id']
+        conn = connectToDatabase()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM images WHERE user_id=%s", [user_id])
+        details = cursor.fetchall()
+        conn.commit()
+        return details
+    except:
+        pass
+    finally:
+        cursor.close()
 
 
-# def getName(args):
-#     user_id = args['user_id']
-#     cursor = conn.cursor()
-#     cursor.execute(
-#         "SELECT * FROM Users WHERE primary_key=%s", [user_id])
-#     details = cursor.fetchone()
-#     cursor.close()
-#     return details
+
+def getName(args):
+    try:
+        user_id = args['user_id']
+        conn = connectToDatabase()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT * FROM Users WHERE primary_key=%s", [user_id])
+        details = cursor.fetchone()
+        conn.commit()
+        return details
+    except:
+        pass
+    finally:
+        cursor.close()

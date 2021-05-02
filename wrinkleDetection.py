@@ -16,48 +16,48 @@ def fixImage(img, fileName):
         return resized
         
     # Read the image
-    pil_image = Image.open(img).convert('RGB')
-    open_cv_image = np.array(pil_image)
-    img = open_cv_image[:, :, ::-1].copy()
-    
-    i = 0
-    while(np.logical_and(img is None, i < 4)):
-        img = cv2.imread(os.path.join("images", imgLocation))
-        i += 1
-
-    # call the haarcascade for finding a face
-    face_cascade = cv2.CascadeClassifier(
-        cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
-
-    # readjust the image to be a certain size
-    while img.shape[0] > 500:
-        img = resize(img, 80)
-    while img.shape[0] < 300:
-        img = resize(img, 110)
-
-    # Try to find the face and rotate if cannot find
-    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    if len(gray_img) != 0:
-        faces = face_cascade.detectMultiScale(
-            gray_img, scaleFactor=1.1, minNeighbors=10)
+    with Image.open(img).convert('RGB') as pil_image:
+        open_cv_image = np.array(pil_image)
+        img = open_cv_image[:, :, ::-1].copy()
+        
         i = 0
-        while(np.logical_and(len(faces) == 0, i < 4)):
-            img = cv2.rotate(img, cv2.cv2.ROTATE_90_COUNTERCLOCKWISE)
-            gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        while(np.logical_and(img is None, i < 4)):
+            img = cv2.imread(os.path.join("images", imgLocation))
+            i += 1
+
+        # call the haarcascade for finding a face
+        face_cascade = cv2.CascadeClassifier(
+            cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+
+        # readjust the image to be a certain size
+        while img.shape[0] > 500:
+            img = resize(img, 80)
+        while img.shape[0] < 300:
+            img = resize(img, 110)
+
+        # Try to find the face and rotate if cannot find
+        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        if len(gray_img) != 0:
             faces = face_cascade.detectMultiScale(
                 gray_img, scaleFactor=1.1, minNeighbors=10)
-            i += 1
-            
-        # Path to the image
-        imagePath = os.path.join(os.path.dirname(
-            __file__), "images", fileName)
-        # Save the file in that path
-        cv2.imwrite(imagePath, img)
-        # Send the image to the upload_file function so it can be put in the bucket
-        imgURL = upload_file_to_s3(imagePath, fileName)
-        return imgURL
-    else:
-        return "failure"
+            i = 0
+            while(np.logical_and(len(faces) == 0, i < 4)):
+                img = cv2.rotate(img, cv2.cv2.ROTATE_90_COUNTERCLOCKWISE)
+                gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                faces = face_cascade.detectMultiScale(
+                    gray_img, scaleFactor=1.1, minNeighbors=10)
+                i += 1
+                
+            # Path to the image
+            imagePath = os.path.join(os.path.dirname(
+                __file__), "images", fileName)
+            # Save the file in that path
+            cv2.imwrite(imagePath, img)
+            # Send the image to the upload_file function so it can be put in the bucket
+            imgURL = upload_file_to_s3(imagePath, fileName)
+            return imgURL
+        else:
+            return "failure"
 
 
 def wrinkleDetection(imgLocation, fileName):

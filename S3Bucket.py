@@ -48,24 +48,24 @@ def getItem(itemName):
 
 def upload_file_to_s3(imagePath, filename):
     bucket_name = "solsmitten2"
-    file = open(imagePath, 'rb')
-    try:
-        s3.upload_fileobj(
-            file,
-            bucket_name,
-            filename,
-        )
-        params = {'Bucket': bucket_name, 'Key': filename}
-        url = s3.generate_presigned_url('get_object', params, ExpiresIn=604800 )
-        if os.path.exists(imagePath):
-            os.remove(imagePath)
-        return url
+    with open(imagePath, 'rb') as file:
+        try:
+            s3.upload_fileobj(
+                file,
+                bucket_name,
+                filename,
+            )
+            params = {'Bucket': bucket_name, 'Key': filename}
+            url = s3.generate_presigned_url('get_object', params, ExpiresIn=604800 )
+            if os.path.exists(imagePath):
+                os.remove(imagePath)
+            return url
 
-    except Exception as e:
-        # This is a catch all exception, edit this part to fit your needs.
-        return {"message": "failure",
-                "error": str(e),
-                }
+        except Exception as e:
+            # This is a catch all exception, edit this part to fit your needs.
+            return {"message": "failure",
+                    "error": str(e),
+                    }
 
 
 def uploadFileToS3FromStorage(location, fileName):

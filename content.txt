@@ -1,4 +1,12 @@
 application.py - The center of the project. Every route and everything    involving the project has to go through there
+	-hello()
+		-Shows the basic data of all the users
+	-Images()
+		-Shows the image data of all users
+	-test_routing()
+		-Is the uploader path to upload a picture for a particular user
+
+config.py - Configuration information necessary to host the project on AWS. This is where the environment variables are set
 
 acneDetection.py -
 
