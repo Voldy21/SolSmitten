@@ -34,38 +34,6 @@ api.add_resource(Delete, "/delete/<string:name>")
 api.add_resource(Base, "/home")
 api.add_resource(BaseData, "/home/<user_id>")
 
-
-# @application.route("/")
-# def hello():
-#     # details = db.get_details()
-#     # string = {
-#     #     "info": details
-#     # }
-#     # return string
-#     return "homepage"
-
-
-# @application.route("/images")
-# def Images():
-#     # details = db.get_Image_details()
-#     # string = {
-#     #     "info": details
-#     # }
-#     # return string
-#     pass
-
-
-# @application.route('/uploaders', methods=['GET', 'POST'])
-# def test_routing():
-#     if request.method == 'POST':
-#         if request.files:
-#             f = request.files["file"]
-#             x = upload_file_to_s3(f, f.filename)
-#             print(f.filename)
-#             return x
-
-
-
 # main uploading path
 @application.route('/uploader', methods=['GET', 'POST'])
 def upload_file_route():
@@ -79,7 +47,7 @@ def upload_file_route():
                 fileName = f'{user_id}-{unique_id}.{urlSplit[1]}'
 
             except:
-                return "first part failure"
+                return "Please include image"
             # Rotate and resize image along with uploading image to S3 bucket and get URL back
             originalURL = fixImage(f, fileName)
             if isinstance(originalURL, dict):
@@ -97,9 +65,8 @@ def upload_file_route():
             wrinkleURL = upload_file_to_s3(os.path.join(
                 os.path.dirname((__file__)), "images", wrinkleDetectionName), wrinkleDetectionName)
             if isinstance(wrinkleURL, dict):
+                # an error has ocurred
                 return wrinkleURL
-            if wrinkleURL is -1:
-                return str(wrinkleURL)
 
             # Insert Data to database
             x = db.insert_image_details(

@@ -36,7 +36,7 @@ class SignUp(Resource):
         initSignup()
         args = signup_args.parse_args()
         user_id = db.insert_details(args)
-        return {"user": user_id}
+        return {"message": user_id}
 
     def put(self):
         initSignup()
